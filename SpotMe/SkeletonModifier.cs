@@ -9,9 +9,30 @@ using Accord.MachineLearning;
 
 namespace SpotMe
 {
+    public class bodyDouble
+    {
+        public enum joints
+        {
+            spineShoulder,
+            leftShoulder,
+            leftElbow,
+            leftWrist,
+            rightShoulder,
+            rightElbow,
+            rightWrist,
+            spineBase,
+            leftHip,
+            leftKnee,
+            leftAnkle,
+            rightHip,
+            rightKnee,
+            rightAnkle
+        };
+
+        public Dictionary<joints, Vector3> jointList = new Dictionary<joints, Vector3>();
+    }
     static class SkeletonModifier
     {
-
         private static int testNum = 0;
         private static double[][] testArray = new double[3][];
 
@@ -32,6 +53,16 @@ namespace SpotMe
 
             return outputVector;
         }
+        private static Vector3 rotateVectorAroundZthenY(double angleYX, double angleXZ, Vector3 inputVector)
+        {
+            Matrix4x4 yRotMat = Matrix4x4.CreateRotationY((float)angleYX);
+            Matrix4x4 zRotMat = Matrix4x4.CreateRotationZ(-(float)angleXZ);
+            Vector3 outputVector = Vector3.Transform(inputVector, zRotMat);
+
+            outputVector = Vector3.Transform(outputVector, yRotMat);
+
+            return outputVector;
+        }
         private static Vector3 vectorizeTwoJoints(JointType jointA, JointType jointB, Body inBody)
         {
             Vector3 outputVector = new Vector3();
@@ -48,14 +79,54 @@ namespace SpotMe
 
             return rotateVectorAroundYthenZ(angleToXYPlane, angleToXZPlane, vectorToLocalize);
         }
-        public static double[][] trainingDataTo3DSkeleton()
+        public static bodyDouble trainingDataTo3DSkeleton(double[] inputTrainingData)
         {
-            Vector3 spineShoulder = new Vector3(0, 0, 2);
-            Vector3 shoulderLeft = spineShoulder + (new Vector3((float)-0.3, 0, 0));
+            bodyDouble returnBody = new bodyDouble();
+
+            double angleYX, angleXZ;
+
+            Vector3 rightBicepDirection = new Vector3((float)inputTrainingData[0], (float)inputTrainingData[1], (float)inputTrainingData[2]);
+            getVector3Angles(out angleYX, out angleXZ, rightBicepDirection);
+            Vector3 rightForearmDirection = new Vector3((float)inputTrainingData[3], (float)inputTrainingData[4], (float)inputTrainingData[5]);
+            rightForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightForearmDirection);
+
+            Vector3 rightThighDirection = new Vector3((float)inputTrainingData[6], (float)inputTrainingData[7], (float)inputTrainingData[8]);
+            getVector3Angles(out angleYX, out angleXZ, rightThighDirection);
+            Vector3 rightShinDirection = new Vector3((float)inputTrainingData[9], (float)inputTrainingData[10], (float)inputTrainingData[11]);
+            rightShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightShinDirection);
+
+            Vector3 leftBicepDirection = new Vector3((float)inputTrainingData[12], (float)inputTrainingData[13], (float)inputTrainingData[14]);
+            getVector3Angles(out angleYX, out angleXZ, leftBicepDirection);
+            Vector3 leftForearmDirection = new Vector3((float)inputTrainingData[15], (float)inputTrainingData[16], (float)inputTrainingData[17]);
+            leftForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, leftForearmDirection);
+
+            Vector3 leftThighDirection = new Vector3((float)inputTrainingData[18], (float)inputTrainingData[19], (float)inputTrainingData[20]);
+            getVector3Angles(out angleYX, out angleXZ, leftThighDirection);
+            Vector3 leftShinDirection= new Vector3((float)inputTrainingData[21], (float)inputTrainingData[22], (float)inputTrainingData[23]);
+            leftShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, leftShinDirection);
+
+            returnBody.jointList[bodyDouble.joints.spineShoulder] = new Vector3((float)-0.5, (float)0.5, 2);
+            returnBody.jointList[bodyDouble.joints.spineBase] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3(0, (float)-0.5, 0));
+
+            returnBody.jointList[bodyDouble.joints.leftShoulder] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3((float)-0.3, 0, 0));
+            returnBody.jointList[bodyDouble.joints.leftElbow] = returnBody.jointList[bodyDouble.joints.leftShoulder] + (leftBicepDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.leftWrist] = returnBody.jointList[bodyDouble.joints.leftElbow] + (leftForearmDirection * (float)0.3);
+
+            returnBody.jointList[bodyDouble.joints.rightShoulder] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3((float)0.3, 0, 0));
+            returnBody.jointList[bodyDouble.joints.rightElbow] = returnBody.jointList[bodyDouble.joints.rightShoulder] + (rightBicepDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.rightWrist] = returnBody.jointList[bodyDouble.joints.rightElbow] + (rightForearmDirection * (float)0.3);
+
+            returnBody.jointList[bodyDouble.joints.leftHip] = returnBody.jointList[bodyDouble.joints.spineBase] + (new Vector3((float)-0.3, 0, 0));
+            returnBody.jointList[bodyDouble.joints.leftKnee] = returnBody.jointList[bodyDouble.joints.leftHip] + (leftThighDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.leftAnkle] = returnBody.jointList[bodyDouble.joints.leftKnee] + (leftShinDirection * (float)0.3);
+
+            returnBody.jointList[bodyDouble.joints.rightHip] = returnBody.jointList[bodyDouble.joints.spineBase] + (new Vector3((float)0.3, 0, 0));
+            returnBody.jointList[bodyDouble.joints.rightKnee] = returnBody.jointList[bodyDouble.joints.rightHip] + (rightThighDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.rightAnkle] = returnBody.jointList[bodyDouble.joints.rightKnee] + (rightShinDirection * (float)0.3);
 
             //Build the skeleton from here
 
-            return null;
+            return returnBody;
         }
         public static void firstRun()
         {
@@ -63,7 +134,9 @@ namespace SpotMe
         }
         public static double[] preprocessSkeleton(Body inBody)
         {
-            Console.WriteLine("Test");
+
+            //TODO Offset shoulder tilt (when they lean to one side or the other)
+
             Vector3 leftShoulder = vectorizeTwoJoints(JointType.ShoulderLeft, JointType.SpineShoulder, inBody);
             Vector3 rightShoulder = vectorizeTwoJoints(JointType.ShoulderLeft, JointType.SpineShoulder, inBody);
 
@@ -119,7 +192,7 @@ namespace SpotMe
 
         public static void debugMethod(Body inBody)
         {
-            trainingDataTo3DSkeleton();
+            trainingDataTo3DSkeleton(preprocessSkeleton(inBody));
         }
 
     }

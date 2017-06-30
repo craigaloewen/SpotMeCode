@@ -362,6 +362,7 @@ namespace SpotMe
 
                             //Put your debugging code here to execute each time a skeleton is drawn
                             //SkeletonModifier.debugMethod(body);
+                            DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
                         }
                     }
 
@@ -409,9 +410,42 @@ namespace SpotMe
             }
         }
 
-        private void DrawTrainingDataOuput(DrawingContext drawingContext, Pen drawingPen, double[][] skeletonData)
+        private void DrawTrainingDataOuput(DrawingContext drawingContext, bodyDouble inBodyDouble, Pen drawingPen)
         {
+            Dictionary<bodyDouble.joints, Point> jointPoints = new Dictionary<bodyDouble.joints, Point>();
 
+            foreach (KeyValuePair<bodyDouble.joints,Vector3> someVectorPair in inBodyDouble.jointList)
+            {
+                CameraSpacePoint jointCamSpacePoint = new CameraSpacePoint();
+
+                jointCamSpacePoint.X = someVectorPair.Value.X;
+                jointCamSpacePoint.Y = someVectorPair.Value.Y;
+                jointCamSpacePoint.Z = someVectorPair.Value.Z;
+
+                DepthSpacePoint depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
+                jointPoints[someVectorPair.Key] = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+            }
+
+            foreach(bodyDouble.joints jointType in jointPoints.Keys)
+            {
+                drawingContext.DrawEllipse(this.trackedJointBrush, null, jointPoints[jointType], JointThickness, JointThickness);
+            }
+
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineShoulder], jointPoints[bodyDouble.joints.leftShoulder]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftShoulder], jointPoints[bodyDouble.joints.leftElbow]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftElbow], jointPoints[bodyDouble.joints.leftWrist]);
+
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineShoulder], jointPoints[bodyDouble.joints.rightShoulder]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightShoulder], jointPoints[bodyDouble.joints.rightElbow]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightElbow], jointPoints[bodyDouble.joints.rightWrist]);
+
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineBase], jointPoints[bodyDouble.joints.leftHip]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftHip], jointPoints[bodyDouble.joints.leftKnee]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftKnee], jointPoints[bodyDouble.joints.leftAnkle]);
+
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineBase], jointPoints[bodyDouble.joints.rightHip]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightHip], jointPoints[bodyDouble.joints.rightKnee]);
+            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightKnee], jointPoints[bodyDouble.joints.rightAnkle]);
         }
 
         /// <summary>
