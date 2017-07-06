@@ -128,6 +128,14 @@ namespace SpotMe
         /// </summary>
         private string statusText = null;
 
+        // Variables to handle showing training data
+        private List<bodyDouble> trainingBodyDoubles;
+        private int trainingBodyDoublesIndex;
+
+        // Some quick hacks to store skeleton data
+        private int storeTrainingDataHACKNum = 0;
+        private double[][] trainingDataHACKStore = new double[4][];
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -214,6 +222,10 @@ namespace SpotMe
 
             // use the window object as the view model in this simple example
             this.DataContext = this;
+
+            // Initialize some of the training variables
+            trainingBodyDoubles = new List<bodyDouble>();
+            trainingBodyDoublesIndex = 0;
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -363,6 +375,20 @@ namespace SpotMe
                             //Put your debugging code here to execute each time a skeleton is drawn
                             //SkeletonModifier.debugMethod(body);
                             DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
+
+                            // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE)
+                            /*
+                            if ((storeTrainingDataHACKNum++) > 0)
+                            {
+
+                                if (storeTrainingDataHACKNum > 5)
+                                {
+                                    TrainingDataIO.saveTrainingData(trainingDataHACKStore, "testData2.csv");
+                                }
+
+                                trainingDataHACKStore[storeTrainingDataHACKNum - 2] = SkeletonModifier.preprocessSkeleton(body);
+                            }
+                            */
                         }
                     }
 
@@ -555,6 +581,53 @@ namespace SpotMe
             // on failure, set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
+        }
+
+        private void loadTrainingData(object sender, RoutedEventArgs e)
+        {
+            trainingBodyDoublesIndex = 0;
+            trainingBodyDoubles = TrainingDataFileManager.loadBodyDoubleFromFile(fileNameBox.Text);
+
+            updateTrainingData();
+        }
+
+        private void nextTrainingData(object sender, RoutedEventArgs e)
+        {
+            if (trainingBodyDoublesIndex < (trainingBodyDoubles.Count-1))
+            {
+                trainingBodyDoublesIndex++;
+            }
+
+            updateTrainingData();
+        }
+
+        private void prevTrainingData(object sender, RoutedEventArgs e)
+        {
+            if (trainingBodyDoublesIndex > 0)
+            {
+                trainingBodyDoublesIndex--;
+            }
+
+            updateTrainingData();
+        }
+
+        private void updateTrainingData()
+        {
+            using (DrawingContext dc = this.drawingGroup.Open())
+            {
+                // Draw a transparent background to set the render size
+                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+
+                if (trainingBodyDoubles.Count < 1)
+                {
+                    trainingDataLabel.Content = "Failure to Open";
+                }
+                else
+                {
+                    trainingDataLabel.Content = ("Success " + (trainingBodyDoublesIndex+1) + " of " + trainingBodyDoubles.Count.ToString());
+                    DrawTrainingDataOuput(dc, trainingBodyDoubles[trainingBodyDoublesIndex],this.bodyColors[0]);
+                }
+            }
         }
     }
 }

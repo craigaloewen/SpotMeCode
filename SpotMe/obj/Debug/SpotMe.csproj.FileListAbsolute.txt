@@ -29,3 +29,6 @@ C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\bin\Debug\
 C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\bin\Debug\System.Numerics.Vectors.xml
 C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\obj\Debug\SpotMe.exe
 C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\obj\Debug\SpotMe.pdb
+C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\obj\Debug\DebugWindow.g.cs
+C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\obj\Debug\SpotMe_MarkupCompile.lref
+C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMe\SpotMe\obj\Debug\DebugWindow.baml
