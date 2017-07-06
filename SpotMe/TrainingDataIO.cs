@@ -8,7 +8,7 @@ using CsvHelper;
 
 namespace SpotMe
 {
-    class TrainingDataIO
+    static class TrainingDataIO
     {
         public static bool saveTrainingData(double[][] inData, string fileName)
         {
@@ -48,24 +48,34 @@ namespace SpotMe
 
         public static double[][] readTrainingData(string fileName)
         {
-            var lineCount = File.ReadLines(fileName).Count();
-            double[][] outData = new double[lineCount - 1][];
-            lineCount = 0;
 
-            using (var sr = new StreamReader(fileName))
+            double[][] outData = null;
+
+            try
             {
-                var reader = new CsvReader(sr);
+                var lineCount = File.ReadLines(fileName).Count();
+                outData = new double[lineCount - 1][];
+                lineCount = 0;
 
-                while (reader.Read())
+                using (var sr = new StreamReader(fileName))
                 {
-                    double[] tempData = new double[reader.FieldHeaders.Length];
+                    var reader = new CsvReader(sr);
 
-                    for (int i = 0; i < tempData.Length; i++)
+                    while (reader.Read())
                     {
-                        tempData[i] = reader.GetField<double>(i);
+                        double[] tempData = new double[reader.FieldHeaders.Length];
+
+                        for (int i = 0; i < tempData.Length; i++)
+                        {
+                            tempData[i] = reader.GetField<double>(i);
+                        }
+                        outData[lineCount++] = tempData;
                     }
-                    outData[lineCount++] = tempData;
                 }
+            }
+            catch
+            {
+                return outData;
             }
 
             return outData;
