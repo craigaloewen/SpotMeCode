@@ -17,7 +17,11 @@ namespace SpotMe
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using System.Numerics;
-    
+    using Accord.MachineLearning.VectorMachines.Learning;
+    using Accord.Statistics.Kernels;
+    using Accord.Math;
+    using Accord.Math.Optimization.Losses;
+
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -128,6 +132,9 @@ namespace SpotMe
         /// </summary>
         private string statusText = null;
 
+        // Variables to do the Machine Learning Part
+        private SpotMeML spotMeClassifier;
+
         // Variables to handle showing training data
         private List<bodyDouble> trainingBodyDoubles;
         private int trainingBodyDoublesIndex;
@@ -227,6 +234,9 @@ namespace SpotMe
             trainingBodyDoubles = new List<bodyDouble>();
             trainingBodyDoublesIndex = 0;
 
+            // Initialize the ML aspect
+            spotMeClassifier = new SpotMe.SpotMeML();
+
             // initialize the components (controls) of the window
             this.InitializeComponent();
         }
@@ -279,6 +289,8 @@ namespace SpotMe
         /// <param name="e">event arguments</param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            spotMeClassifier.init();
+
             if (this.bodyFrameReader != null)
             {
                 this.bodyFrameReader.FrameArrived += this.Reader_FrameArrived;
@@ -373,8 +385,9 @@ namespace SpotMe
                             this.DrawHand(body.HandRightState, jointPoints[JointType.HandRight], dc);
 
                             //Put your debugging code here to execute each time a skeleton is drawn
-                            //SkeletonModifier.debugMethod(body);
                             DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
+
+                            trainingDataLabel.Content = spotMeClassifier.getClassPrediction(SkeletonModifier.preprocessSkeleton(body)).ToString();
 
                             // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE)
                             /*
@@ -440,7 +453,7 @@ namespace SpotMe
         {
             Dictionary<bodyDouble.joints, Point> jointPoints = new Dictionary<bodyDouble.joints, Point>();
 
-            foreach (KeyValuePair<bodyDouble.joints,Vector3> someVectorPair in inBodyDouble.jointList)
+            foreach (KeyValuePair<bodyDouble.joints,System.Numerics.Vector3> someVectorPair in inBodyDouble.jointList)
             {
                 CameraSpacePoint jointCamSpacePoint = new CameraSpacePoint();
 
@@ -609,6 +622,55 @@ namespace SpotMe
             }
 
             updateTrainingData();
+        }
+
+        private void debugFunction(object sender, RoutedEventArgs e)
+        {
+            Accord.Math.Random.Generator.Seed = 0;
+
+            double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
+            double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
+
+            double[][] inputs = inputData.MemberwiseClone();
+
+            int[] outputs =
+            {
+                0,0,0,
+                1,1,1,1
+            };
+
+            // Create the multi-class learning algorithm for the machine
+            var teacher = new MulticlassSupportVectorLearning<Gaussian>()
+            {
+                // Configure the learning algorithm to use SMO to train the
+                //  underlying SVMs in each of the binary class subproblems.
+                Learner = (param) => new SequentialMinimalOptimization<Gaussian>()
+                {
+                    // Estimate a suitable guess for the Gaussian kernel's parameters.
+                    // This estimate can serve as a starting point for a grid search.
+                    UseKernelEstimation = true
+                }
+            };
+
+            // Configure parallel execution options
+            teacher.ParallelOptions.MaxDegreeOfParallelism = 1;
+
+            // Learn a machine
+            var machine = teacher.Learn(inputs, outputs);
+
+
+            var supportVectors = machine.Models[0][0].SupportVectors;
+
+
+
+            trainingBodyDoublesIndex = 0;
+            
+            for (int i = 0; i < supportVectors.Length; i++)
+            {
+                trainingBodyDoubles.Add(SkeletonModifier.trainingDataTo3DSkeleton(supportVectors[i]));
+            }
+
+
         }
 
         private void updateTrainingData()

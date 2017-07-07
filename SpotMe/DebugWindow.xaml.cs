@@ -17,6 +17,7 @@ using Accord.MachineLearning;
 using Accord.MachineLearning.VectorMachines.Learning;
 using Accord.Statistics.Kernels;
 using Accord.Math.Optimization.Losses;
+using Accord.MachineLearning.VectorMachines;
 
 namespace SpotMe
 {
@@ -37,6 +38,17 @@ namespace SpotMe
 
         private void Button2_Function(object sender, RoutedEventArgs e)
         {
+            Accord.Math.Random.Generator.Seed = 0;
+
+            double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
+            double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
+
+            List<bodyDouble.bones> problemBones = SkeletonModifier.getProblemJoints(inputData[0], inputData[3]);
+
+            foreach (bodyDouble.bones someBone in problemBones)
+            {
+                System.Numerics.Vector3 result = SkeletonModifier.getBoneCorrectionDirection(someBone, inputData[0], inputData[3]);
+            }
 
         }
 
@@ -44,7 +56,7 @@ namespace SpotMe
         {
             Accord.Math.Random.Generator.Seed = 0;
 
-            double[][] inputData = TrainingDataIO.readTrainingData("testData.csv");
+            double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
             double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
 
             double[][] inputs = inputData.MemberwiseClone();
@@ -76,6 +88,13 @@ namespace SpotMe
 
             // Obtain class predictions for each sample
             int[] predicted = machine.Decide(inputs);
+            int[] predicted2 = machine.Decide(testInputs);
+
+            var probabilities = machine.Scores(inputs);
+
+            var probabilities3 = getSpecificProbabilites(machine, inputs, predicted);
+            var probabilities4 = getSpecificProbabilites(machine, testInputs, predicted2);
+
 
             // Get class scores for each sample
             double[] scores = machine.Score(inputs);
@@ -83,5 +102,18 @@ namespace SpotMe
             // Compute classification error
             double error = new ZeroOneLoss(outputs).Loss(predicted);
         }
+
+        public double[] getSpecificProbabilites(MulticlassSupportVectorMachine<Gaussian> machine, double[][] inputs, int[] predictions)
+        {
+            double[] results = new double[predictions.Length];
+
+            for (int i = 0; i < predictions.Length; i++)
+            {
+                results[i] = machine.Probability(inputs[i], predictions[i]);
+            }
+
+            return results;
+        }
+
     }
 }

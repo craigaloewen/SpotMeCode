@@ -40,12 +40,14 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label x:Name="trainingDataLabel" Content="Ready to Load Data" HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Top"/>
-            <TextBox x:Name="fileNameBox" HorizontalAlignment="Left" Height="22" Grid.Row="1" TextWrapping="Wrap" Text="testData.csv" VerticalAlignment="Top" Width="120"/>
+            <TextBox x:Name="fileNameBox" HorizontalAlignment="Left" Height="22" Grid.Row="1" TextWrapping="Wrap" Text="militaryPressData.csv" VerticalAlignment="Top" Width="120"/>
             <Button x:Name="loadButton" Grid.Row="2" Content="Load" Width="120" Click="loadTrainingData" ></Button>
             <Button x:Name="nextButton" Grid.Row="3" Content="Next" Width="120" Click="nextTrainingData" ></Button>
             <Button x:Name="prevButton" Grid.Row="4" Content="Prev" Width="120" Click="prevTrainingData" ></Button>
+            <Button x:Name="debugButton" Grid.Row="5" Content="Debug Function" Width="120" Click="debugFunction" Margin="0 10 0 0" ></Button>
         </Grid>
 
 
