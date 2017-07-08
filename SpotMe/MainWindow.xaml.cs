@@ -140,8 +140,8 @@ namespace SpotMe
         private int trainingBodyDoublesIndex;
 
         // Some quick hacks to store skeleton data
-        private int storeTrainingDataHACKNum = 0;
-        private double[][] trainingDataHACKStore = new double[4][];
+        private int storeTrainingDataHACKNum = -1001;
+        private double[][] trainingDataHACKStore = new double[5][];
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -388,20 +388,27 @@ namespace SpotMe
                             DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
 
                             trainingDataLabel.Content = spotMeClassifier.getClassPrediction(SkeletonModifier.preprocessSkeleton(body)).ToString();
+                            //trainingDataLabel.Content = storeTrainingDataHACKNum;
 
-                            // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE)
-                            /*
-                            if ((storeTrainingDataHACKNum++) > 0)
+                            // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE
+
+                            if ((storeTrainingDataHACKNum) >= -1000)
                             {
-
-                                if (storeTrainingDataHACKNum > 5)
+                                if ((storeTrainingDataHACKNum % 100 == 0) && (storeTrainingDataHACKNum >= 0))
                                 {
-                                    TrainingDataIO.saveTrainingData(trainingDataHACKStore, "testData2.csv");
+                                    trainingDataHACKStore[storeTrainingDataHACKNum/100] = SkeletonModifier.preprocessSkeleton(body);
                                 }
 
-                                trainingDataHACKStore[storeTrainingDataHACKNum - 2] = SkeletonModifier.preprocessSkeleton(body);
+                                storeTrainingDataHACKNum++;
+                                
+
+                                if (storeTrainingDataHACKNum > 400)
+                                {
+                                    TrainingDataIO.saveTrainingData(trainingDataHACKStore, "testDataOutput.csv");
+                                    storeTrainingDataHACKNum = -1001;
+                                }
                             }
-                            */
+                            
                         }
                     }
 
@@ -599,7 +606,7 @@ namespace SpotMe
         private void loadTrainingData(object sender, RoutedEventArgs e)
         {
             trainingBodyDoublesIndex = 0;
-            trainingBodyDoubles = TrainingDataFileManager.loadBodyDoubleFromFile(fileNameBox.Text);
+            trainingBodyDoubles = TrainingDataFileManager.loadBodyDoubleFromFileWithClassifierIgnored(fileNameBox.Text);
 
             updateTrainingData();
         }
@@ -625,6 +632,11 @@ namespace SpotMe
         }
 
         private void debugFunction(object sender, RoutedEventArgs e)
+        {
+            storeTrainingDataHACKNum = -200;
+        }
+
+        private void debugFunctionLoadTrainingData(object sender, RoutedEventArgs e)
         {
             Accord.Math.Random.Generator.Seed = 0;
 

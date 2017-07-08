@@ -169,27 +169,27 @@ namespace SpotMe
 
             double angleYX, angleXZ;
 
-            Vector3 rightBicepDirection = new Vector3((float)inputTrainingData[0], (float)inputTrainingData[1], (float)inputTrainingData[2]);
-            getVector3Angles(out angleYX, out angleXZ, rightBicepDirection);
-            Vector3 rightForearmDirection = new Vector3((float)inputTrainingData[3], (float)inputTrainingData[4], (float)inputTrainingData[5]);
-            rightForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightForearmDirection);
-
-            Vector3 rightThighDirection = new Vector3((float)inputTrainingData[6], (float)inputTrainingData[7], (float)inputTrainingData[8]);
-            getVector3Angles(out angleYX, out angleXZ, rightThighDirection);
-            Vector3 rightShinDirection = new Vector3((float)inputTrainingData[9], (float)inputTrainingData[10], (float)inputTrainingData[11]);
-            rightShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightShinDirection);
-
-            Vector3 leftBicepDirection = new Vector3((float)inputTrainingData[12], (float)inputTrainingData[13], (float)inputTrainingData[14]);
-            leftBicepDirection = rotateVectorAroundZthenY(-3.14159, 0, leftBicepDirection);
+            Vector3 leftBicepDirection = new Vector3((float)inputTrainingData[0], (float)inputTrainingData[1], (float)inputTrainingData[2]);
             getVector3Angles(out angleYX, out angleXZ, leftBicepDirection);
-            Vector3 leftForearmDirection = new Vector3((float)inputTrainingData[15], (float)inputTrainingData[16], (float)inputTrainingData[17]);
+            Vector3 leftForearmDirection = new Vector3((float)inputTrainingData[3], (float)inputTrainingData[4], (float)inputTrainingData[5]);
             leftForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, leftForearmDirection);
 
-            Vector3 leftThighDirection = new Vector3((float)inputTrainingData[18], (float)inputTrainingData[19], (float)inputTrainingData[20]);
-            leftThighDirection = rotateVectorAroundZthenY(-3.14159, 0, leftThighDirection);
+            Vector3 leftThighDirection = new Vector3((float)inputTrainingData[6], (float)inputTrainingData[7], (float)inputTrainingData[8]);
             getVector3Angles(out angleYX, out angleXZ, leftThighDirection);
-            Vector3 leftShinDirection= new Vector3((float)inputTrainingData[21], (float)inputTrainingData[22], (float)inputTrainingData[23]);
+            Vector3 leftShinDirection = new Vector3((float)inputTrainingData[9], (float)inputTrainingData[10], (float)inputTrainingData[11]);
             leftShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, leftShinDirection);
+
+            Vector3 rightBicepDirection = new Vector3((float)inputTrainingData[12], (float)inputTrainingData[13], (float)inputTrainingData[14]);
+            //rightBicepDirection = rotateVectorAroundZthenY(-3.14159, 0, rightBicepDirection);
+            getVector3Angles(out angleYX, out angleXZ, rightBicepDirection);
+            Vector3 rightForearmDirection = new Vector3((float)inputTrainingData[15], (float)inputTrainingData[16], (float)inputTrainingData[17]);
+            rightForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightForearmDirection);
+
+            Vector3 rightThighDirection = new Vector3((float)inputTrainingData[18], (float)inputTrainingData[19], (float)inputTrainingData[20]);
+            //rightThighDirection = rotateVectorAroundZthenY(-3.14159, 0, rightThighDirection);
+            getVector3Angles(out angleYX, out angleXZ, rightThighDirection);
+            Vector3 rightShinDirection= new Vector3((float)inputTrainingData[21], (float)inputTrainingData[22], (float)inputTrainingData[23]);
+            rightShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightShinDirection);
 
             returnBody.jointList[bodyDouble.joints.spineShoulder] = new Vector3((float)-0.5, (float)0.5, 2);
             returnBody.jointList[bodyDouble.joints.spineBase] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3(0, (float)-0.5, 0));
@@ -251,14 +251,14 @@ namespace SpotMe
             Vector3 rightShinRotated = localCoordVector(rightShin, rightThigh);
 
             List<Vector3> classificationDataList = new List<Vector3>();
-            classificationDataList.Add(leftBicepRotated);
+            classificationDataList.Add(leftBicep); // Used to be rotated
             classificationDataList.Add(leftForearmRotated);
-            classificationDataList.Add(leftThighRotated);
+            classificationDataList.Add(leftThigh); // Used to be rotated
             classificationDataList.Add(leftShinRotated);
 
-            classificationDataList.Add(rightBicepRotated);
+            classificationDataList.Add(rightBicep); // Used to be rotated
             classificationDataList.Add(rightForearmRotated);
-            classificationDataList.Add(rightThighRotated);
+            classificationDataList.Add(rightThigh); // Used to be rotated
             classificationDataList.Add(rightShinRotated);
 
             double[] classificationDataArray = new double[24];

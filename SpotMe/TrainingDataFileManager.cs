@@ -29,5 +29,28 @@ namespace SpotMe
             return returnList;
         }
 
+        public static List<bodyDouble> loadBodyDoubleFromFileWithClassifierIgnored(string fileName)
+        {
+            List<bodyDouble> returnList = new List<bodyDouble>();
+
+            double[][] outputData;
+            int[] outputClassifications;
+
+            bool result = TrainingDataIO.readTrainingDataWithClassifiers(fileName,out outputData,out outputClassifications);
+
+            // Return an empty list if there is no training data to be read
+            if (outputData == null)
+            {
+                return returnList;
+            }
+
+            for (int i = 0; i < outputData.Length; i++)
+            {
+                returnList.Add(SkeletonModifier.trainingDataTo3DSkeleton(outputData[i]));
+            }
+
+            return returnList;
+        }
+
     }
 }

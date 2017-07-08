@@ -19,15 +19,10 @@ namespace SpotMe
         {
             Accord.Math.Random.Generator.Seed = 0;
 
-            double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
-            double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
+            double[][] inputs;
+            int[] outputs;
 
-            double[][] inputs = inputData.MemberwiseClone();
-
-            int[] outputs =
-            {
-                0,1,0,1,2,3,2,3
-            };
+            bool result = TrainingDataIO.readTrainingDataWithClassifiers("mp.csv", out inputs, out outputs);
 
             // Create the multi-class learning algorithm for the machine
             var teacher = new MulticlassSupportVectorLearning<Gaussian>()
