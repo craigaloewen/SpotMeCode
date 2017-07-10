@@ -52,5 +52,23 @@ namespace SpotMe
             return returnList;
         }
 
+        public static Exercise loadExerciseFromFile(string fileName)
+        {
+            Exercise returnExercise = new Exercise();
+
+            double[][] outputData;
+            int[] outputClassifications;
+
+            bool result = TrainingDataIO.readTrainingDataWithClassifiers(fileName, out outputData, out outputClassifications);
+
+            // Return an empty list if there is no training data to be read
+            if (outputData == null)
+            {
+                return returnExercise;
+            }
+
+            return returnExercise;
+        }
+
     }
 }

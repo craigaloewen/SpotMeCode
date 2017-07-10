@@ -66,3 +66,6 @@ C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCodeV3\SpotMe\obj\
 C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCodeV3\SpotMe\obj\Debug\SpotMe.g.resources
 C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCodeV3\SpotMe\obj\Debug\SpotMe.Properties.Resources.resources
 C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCodeV3\SpotMe\obj\Debug\SpotMe.csproj.GenerateResource.Cache
+C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCode\SpotMe\bin\Debug\SpotMe.exe.config
+C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCode\SpotMe\obj\Debug\SpotMe.exe
+C:\Users\t-crloew\Documents\Visual Studio 2015\Projects\SpotMeCode\SpotMe\obj\Debug\SpotMe.pdb

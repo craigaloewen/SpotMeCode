@@ -89,6 +89,7 @@
     <Compile Include="DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Exercise.cs" />
     <Compile Include="SkeletonModifier.cs" />
     <Compile Include="SpotMeML.cs" />
     <Compile Include="TrainingDataFileManager.cs" />
