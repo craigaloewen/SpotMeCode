@@ -387,7 +387,7 @@ namespace SpotMe
                             //Put your debugging code here to execute each time a skeleton is drawn
                             DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
 
-                            trainingDataLabel.Content = spotMeClassifier.getClassPrediction(SkeletonModifier.preprocessSkeleton(body)).ToString();
+                            trainingDataLabel.Content = spotMeClassifier.getClassPrediction(body).ToString();
                             //trainingDataLabel.Content = storeTrainingDataHACKNum;
 
                             // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE

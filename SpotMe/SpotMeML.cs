@@ -7,13 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Accord.MachineLearning.VectorMachines;
+using Microsoft.Kinect;
 
 namespace SpotMe
 {
     class SpotMeML
     {
 
-        MulticlassSupportVectorMachine<Gaussian> machine;
+        private MulticlassSupportVectorMachine<Gaussian> machine;
 
         public void init()
         {
@@ -67,8 +68,11 @@ namespace SpotMe
 
         }
 
-        public int getClassPrediction(double[] inputData)
+        public int getClassPrediction(Body inBody)
         {
+
+            double[] inputData = SkeletonModifier.preprocessSkeleton(inBody);
+
             int prediction = machine.Decide(inputData);
             double probability = machine.Score(inputData);
 
@@ -79,6 +83,11 @@ namespace SpotMe
             {
                 return prediction;
             }
+        }
+
+        public bool isBodyMoving(Body inBody)
+        {
+            return true;
         }
 
     }

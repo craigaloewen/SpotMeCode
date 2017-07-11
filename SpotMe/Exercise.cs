@@ -9,13 +9,22 @@ namespace SpotMe
     class Exercise
     {
 
-        public double[] acceptedContractedForm;
-        public double[] acceptedExtendedForm;
+        public string exerciseName;
+        public double[] contractedForm;
+        public double[] extendedForm;
+        public List<Classifier> classifierList;
 
         public Exercise()
         {
-            acceptedContractedForm = null;
-            acceptedExtendedForm = null;
+
+        }
+
+        public Exercise(string inName, double[] inContractedForm, double[] inExtendedForm, List<Classifier> inClassifierList)
+        {
+            exerciseName = inName;
+            contractedForm = inContractedForm;
+            extendedForm = inExtendedForm;
+            classifierList = inClassifierList;
         }
 
     }

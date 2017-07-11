@@ -43,7 +43,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Label x:Name="trainingDataLabel" Content="Ready to Load Data" HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Top" FontSize="72"/>
+            <Label x:Name="trainingDataLabel" Content="Ready to Load Data" HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Top"/>
             <TextBox x:Name="fileNameBox" HorizontalAlignment="Left" Height="22" Grid.Row="1" TextWrapping="Wrap" Text="militaryPressData.csv" VerticalAlignment="Top" Width="120"/>
             <Button x:Name="loadButton" Grid.Row="2" Content="Load" Width="120" Click="loadTrainingData" ></Button>
             <Button x:Name="nextButton" Grid.Row="3" Content="Next" Width="120" Click="nextTrainingData" ></Button>
