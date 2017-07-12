@@ -15,15 +15,35 @@ namespace SpotMe
     {
 
         private MulticlassSupportVectorMachine<Gaussian> machine;
+        private double[] lastKnownInput = null;
+
+        private const double predictionProbabilityCeiling = 0.5;
+
+        // A bool to act as a Schmidtt Trigger for movement detection
+        public bool hasReportedMovement = false;
+
+        public double movementIndexValue = 0;
+        private const double movementIndexRetentionRate = ( 1 - 0.2 ); // The - 0.2 is to put it in a 'decay rate' format which is easier to conceptualize
+        private const double lowerMovementLimit = 0.1;
+        private const double upperMovementLimit = 0.2;
+
+        // DEBUG DATA
+        public double[] goodForm = null;
 
         public void init()
         {
             Accord.Math.Random.Generator.Seed = 0;
+            lastKnownInput = null;
 
             double[][] inputs;
             int[] outputs;
 
             bool result = TrainingDataIO.readTrainingDataWithClassifiers("mp.csv", out inputs, out outputs);
+
+            // DEBUG DATA
+            goodForm = inputs[0];
+            // ----
+
 
             // Create the multi-class learning algorithm for the machine
             var teacher = new MulticlassSupportVectorLearning<Gaussian>()
@@ -76,7 +96,7 @@ namespace SpotMe
             int prediction = machine.Decide(inputData);
             double probability = machine.Score(inputData);
 
-            if (probability < 0.5)
+            if (probability < predictionProbabilityCeiling)
             {
                 return -1;
             } else
@@ -85,10 +105,52 @@ namespace SpotMe
             }
         }
 
-        public bool isBodyMoving(Body inBody)
+        private double getMovementSquaredDiff(double[] inputA, double[] inputB)
         {
-            return true;
+            double returnValue = 0;
+
+            for (int i = 0; i < inputA.Length; i++)
+            {
+                double inputDiff = inputA[i] - inputB[i];
+                returnValue += ( inputDiff * inputDiff );
+            }
+
+            return returnValue;
         }
 
+        public bool hasBodyPaused(Body inBody)
+        {
+            double[] currentInput = SkeletonModifier.preprocessSkeleton(inBody);
+
+            // Test if this is the first run
+            if (lastKnownInput == null)
+            {
+                lastKnownInput = currentInput;
+                return false;
+            }
+
+            // Get number difference between inputs
+            double movementSquaredDiff = getMovementSquaredDiff(currentInput,lastKnownInput);
+            
+            movementIndexValue += movementSquaredDiff;
+            //Decay the value
+            movementIndexValue *= movementIndexRetentionRate;
+
+            lastKnownInput = currentInput;
+
+            if (movementIndexValue < lowerMovementLimit && !hasReportedMovement)
+            {
+                hasReportedMovement = true;
+                System.Diagnostics.Debug.Print("Movement Stop Detected");
+                return true;
+            }
+
+            if (movementIndexValue > upperMovementLimit && hasReportedMovement)
+            {
+                hasReportedMovement = false;
+            }
+
+            return false;
+        }
     }
 }

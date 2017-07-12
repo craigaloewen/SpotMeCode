@@ -43,7 +43,7 @@ namespace SpotMe
             double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
             double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
 
-            List<bodyDouble.bones> problemBones = SkeletonModifier.getProblemJoints(inputData[0], inputData[3]);
+            List<bodyDouble.bones> problemBones = SkeletonModifier.getProblemBones(inputData[0], inputData[3]);
 
             foreach (bodyDouble.bones someBone in problemBones)
             {

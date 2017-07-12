@@ -133,7 +133,7 @@ namespace SpotMe
         private string statusText = null;
 
         // Variables to do the Machine Learning Part
-        private SpotMeML spotMeClassifier;
+        private SpotMeML spotMeMLAlg;
 
         // Variables to handle showing training data
         private List<bodyDouble> trainingBodyDoubles;
@@ -235,7 +235,7 @@ namespace SpotMe
             trainingBodyDoublesIndex = 0;
 
             // Initialize the ML aspect
-            spotMeClassifier = new SpotMe.SpotMeML();
+            spotMeMLAlg = new SpotMe.SpotMeML();
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -289,7 +289,7 @@ namespace SpotMe
         /// <param name="e">event arguments</param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            spotMeClassifier.init();
+            spotMeMLAlg.init();
 
             if (this.bodyFrameReader != null)
             {
@@ -384,14 +384,18 @@ namespace SpotMe
                             this.DrawHand(body.HandLeftState, jointPoints[JointType.HandLeft], dc);
                             this.DrawHand(body.HandRightState, jointPoints[JointType.HandRight], dc);
 
-                            //Put your debugging code here to execute each time a skeleton is drawn
+                            // Put your debugging code here to execute each time a skeleton is drawn
                             DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
+                            DrawFormCorrection(joints, jointPoints, body, dc, drawPen);
+                            
 
-                            trainingDataLabel.Content = spotMeClassifier.getClassPrediction(body).ToString();
+                            //trainingDataLabel.Content = spotMeClassifier.getClassPrediction(body).ToString();
                             //trainingDataLabel.Content = storeTrainingDataHACKNum;
+                            trainingDataLabel.Content = Math.Round(spotMeMLAlg.movementIndexValue,3);
 
-                            // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE
+                            spotMeMLAlg.hasBodyPaused(body);
 
+                            // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE)
                             if ((storeTrainingDataHACKNum) >= -1000)
                             {
                                 if ((storeTrainingDataHACKNum % 100 == 0) && (storeTrainingDataHACKNum >= 0))
@@ -492,6 +496,19 @@ namespace SpotMe
             drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineBase], jointPoints[bodyDouble.joints.rightHip]);
             drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightHip], jointPoints[bodyDouble.joints.rightKnee]);
             drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightKnee], jointPoints[bodyDouble.joints.rightAnkle]);
+        }
+
+        private void DrawFormCorrection(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, Body inBody, DrawingContext drawingContext, Pen drawingPen)
+        {
+
+            double[] inputData = SkeletonModifier.preprocessSkeleton(inBody);
+            List<bodyDouble.bones> results = SkeletonModifier.getProblemBones(inputData, spotMeMLAlg.goodForm);
+
+            foreach (bodyDouble.bones problemBone in results)
+            {
+                System.Numerics.Vector3 correctionVector = SkeletonModifier.getBoneCorrectionDirection(problemBone, inputData, spotMeMLAlg.goodForm);
+            }
+
         }
 
         /// <summary>

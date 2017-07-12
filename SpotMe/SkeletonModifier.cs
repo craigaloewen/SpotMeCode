@@ -146,7 +146,7 @@ namespace SpotMe
             return returnVector;
         }
 
-        public static List<bodyDouble.bones> getProblemJoints(double[] compareSkeleton, double[] acceptedSkeleton)
+        public static List<bodyDouble.bones> getProblemBones(double[] compareSkeleton, double[] acceptedSkeleton)
         {
             List<bodyDouble.bones> returnList = new List<bodyDouble.bones>();
 
