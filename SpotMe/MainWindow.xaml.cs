@@ -506,8 +506,12 @@ namespace SpotMe
 
             foreach (bodyDouble.bones problemBone in results)
             {
-                System.Numerics.Vector3 correctionVector = SkeletonModifier.getBoneCorrectionDirection(problemBone, inputData, spotMeMLAlg.goodForm);
+                DrawCorrectedLimb(joints, jointPoints, drawingContext, drawingPen, spotMeMLAlg.goodForm);
             }
+        }
+
+        private void DrawCorrectedLimb(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen, double[] acceptedForm)
+        {
 
         }
 
