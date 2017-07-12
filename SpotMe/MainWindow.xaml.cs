@@ -19,7 +19,6 @@ namespace SpotMe
     using System.Numerics;
     using Accord.MachineLearning.VectorMachines.Learning;
     using Accord.Statistics.Kernels;
-    using Accord.Math;
     using Accord.Math.Optimization.Losses;
 
     /// <summary>
@@ -402,7 +401,7 @@ namespace SpotMe
                                 {
                                     trainingDataHACKStore[storeTrainingDataHACKNum/100] = SkeletonModifier.preprocessSkeleton(body);
                                 }
-
+                                
                                 storeTrainingDataHACKNum++;
                                 
 
@@ -506,13 +505,70 @@ namespace SpotMe
 
             foreach (bodyDouble.bones problemBone in results)
             {
-                DrawCorrectedLimb(joints, jointPoints, drawingContext, drawingPen, spotMeMLAlg.goodForm);
+                DrawCorrectedLimb(joints, jointPoints, problemBone, spotMeMLAlg.goodForm, drawingContext, drawingPen);
             }
         }
 
-        private void DrawCorrectedLimb(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen, double[] acceptedForm)
+        private void DrawCorrectedLimb(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, bodyDouble.bones inBone, double[] acceptedForm, DrawingContext drawingContext, Pen drawingPen)
         {
 
+            Vector3 baseJoint = new Vector3();
+            Vector3 limbJoint1;
+            Vector3 limbJoint2;
+
+            CameraSpacePoint jointCamSpacePoint;
+            DepthSpacePoint depthSpacePoint;
+            Point limbJoint1Point;
+            Point limbJoint2Point;
+
+            JointType baseJointType;
+
+            switch (inBone)
+            {
+                case bodyDouble.bones.leftBicep:
+                case bodyDouble.bones.leftForearm:
+
+                    baseJointType = JointType.ShoulderLeft;
+                    
+                    break;
+                case bodyDouble.bones.rightBicep:
+                case bodyDouble.bones.rightForearm:
+
+                    baseJointType = JointType.ShoulderRight;
+
+                    break;
+                default:
+                    return;
+            }
+
+            // Base Joint
+            baseJoint.X = joints[JointType.ShoulderLeft].Position.X;
+            baseJoint.Y = joints[JointType.ShoulderLeft].Position.Y;
+            baseJoint.Z = joints[JointType.ShoulderLeft].Position.Z;
+
+            SkeletonModifier.generateLimbPositionsFromBone(acceptedForm, inBone, baseJoint, out limbJoint1, out limbJoint2);
+
+            // Joint 1
+            jointCamSpacePoint = new CameraSpacePoint();
+
+            jointCamSpacePoint.X = limbJoint1.X;
+            jointCamSpacePoint.Y = limbJoint1.Y;
+            jointCamSpacePoint.Z = limbJoint1.Z;
+
+            depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
+            limbJoint1Point = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+
+            // Joint 2
+            jointCamSpacePoint.X = limbJoint1.X;
+            jointCamSpacePoint.Y = limbJoint1.Y;
+            jointCamSpacePoint.Z = limbJoint1.Z;
+
+            depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
+            limbJoint2Point = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+
+            // Draw joints
+            drawingContext.DrawLine(this.bodyColors[5], jointPoints[baseJointType], limbJoint1Point);
+            drawingContext.DrawLine(this.bodyColors[5], limbJoint1Point, limbJoint2Point);
         }
 
         /// <summary>
@@ -664,7 +720,7 @@ namespace SpotMe
             double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
             double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
 
-            double[][] inputs = inputData.MemberwiseClone();
+            double[][] inputs = inputData;
 
             int[] outputs =
             {
