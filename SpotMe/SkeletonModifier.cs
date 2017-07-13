@@ -176,16 +176,12 @@ namespace SpotMe
                 case bodyDouble.bones.leftForearm:
                     limbPoint1Direction = new Vector3((float)acceptedSkeletonData[0], (float)acceptedSkeletonData[1], (float)acceptedSkeletonData[2]);
                     limbPoint2Direction = new Vector3((float)acceptedSkeletonData[3], (float)acceptedSkeletonData[4], (float)acceptedSkeletonData[5]);
-                    getVector3Angles(out angleYX, out angleXZ, limbPoint1Direction);
-                    limbPoint2Direction = rotateVectorAroundZthenY(-angleYX, -angleXZ, limbPoint2Direction);
-
+                    
                     break;
                 case bodyDouble.bones.rightBicep:
                 case bodyDouble.bones.rightForearm:
                     limbPoint1Direction = new Vector3((float)acceptedSkeletonData[12], (float)acceptedSkeletonData[13], (float)acceptedSkeletonData[14]);
                     limbPoint2Direction = new Vector3((float)acceptedSkeletonData[15], (float)acceptedSkeletonData[16], (float)acceptedSkeletonData[17]);
-                    getVector3Angles(out angleYX, out angleXZ, limbPoint2Direction);
-                    limbPoint2Direction = rotateVectorAroundZthenY(-angleYX, -angleXZ, limbPoint2Direction);
 
                     break;
                 default:
@@ -193,6 +189,9 @@ namespace SpotMe
                     limbPoint2 = new Vector3();
                     return false;
             }
+
+            getVector3Angles(out angleYX, out angleXZ, limbPoint1Direction);
+            limbPoint2Direction = rotateVectorAroundZthenY(-angleYX, -angleXZ, limbPoint2Direction);
 
             limbPoint1 = basePoint + ( limbPoint1Direction * ( (float) 0.3 ) );
             limbPoint2 = limbPoint1 + ( limbPoint2Direction * ( (float) 0.3 ) );

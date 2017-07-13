@@ -388,9 +388,9 @@ namespace SpotMe
                             DrawFormCorrection(joints, jointPoints, body, dc, drawPen);
                             
 
-                            //trainingDataLabel.Content = spotMeClassifier.getClassPrediction(body).ToString();
+                            trainingDataLabel.Content = spotMeMLAlg.getClassPrediction(body).ToString();
                             //trainingDataLabel.Content = storeTrainingDataHACKNum;
-                            trainingDataLabel.Content = Math.Round(spotMeMLAlg.movementIndexValue,3);
+                            //trainingDataLabel.Content = Math.Round(spotMeMLAlg.movementIndexValue,3);
 
                             spotMeMLAlg.hasBodyPaused(body);
 
@@ -542,9 +542,9 @@ namespace SpotMe
             }
 
             // Base Joint
-            baseJoint.X = joints[JointType.ShoulderLeft].Position.X;
-            baseJoint.Y = joints[JointType.ShoulderLeft].Position.Y;
-            baseJoint.Z = joints[JointType.ShoulderLeft].Position.Z;
+            baseJoint.X = joints[baseJointType].Position.X;
+            baseJoint.Y = joints[baseJointType].Position.Y;
+            baseJoint.Z = joints[baseJointType].Position.Z;
 
             SkeletonModifier.generateLimbPositionsFromBone(acceptedForm, inBone, baseJoint, out limbJoint1, out limbJoint2);
 
@@ -559,16 +559,16 @@ namespace SpotMe
             limbJoint1Point = new Point(depthSpacePoint.X, depthSpacePoint.Y);
 
             // Joint 2
-            jointCamSpacePoint.X = limbJoint1.X;
-            jointCamSpacePoint.Y = limbJoint1.Y;
-            jointCamSpacePoint.Z = limbJoint1.Z;
+            jointCamSpacePoint.X = limbJoint2.X;
+            jointCamSpacePoint.Y = limbJoint2.Y;
+            jointCamSpacePoint.Z = limbJoint2.Z;
 
             depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
             limbJoint2Point = new Point(depthSpacePoint.X, depthSpacePoint.Y);
 
             // Draw joints
-            drawingContext.DrawLine(this.bodyColors[5], jointPoints[baseJointType], limbJoint1Point);
-            drawingContext.DrawLine(this.bodyColors[5], limbJoint1Point, limbJoint2Point);
+            drawingContext.DrawLine(this.bodyColors[0], jointPoints[baseJointType], limbJoint1Point);
+            drawingContext.DrawLine(this.bodyColors[0], limbJoint1Point, limbJoint2Point);
         }
 
         /// <summary>

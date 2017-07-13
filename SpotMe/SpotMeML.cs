@@ -17,7 +17,7 @@ namespace SpotMe
         private MulticlassSupportVectorMachine<Gaussian> machine;
         private double[] lastKnownInput = null;
 
-        private const double predictionProbabilityCeiling = 0.5;
+        private const double predictionProbabilityCeiling = 1.3;
 
         // A bool to act as a Schmidtt Trigger for movement detection
         public bool hasReportedMovement = false;
@@ -52,9 +52,7 @@ namespace SpotMe
                 //  underlying SVMs in each of the binary class subproblems.
                 Learner = (param) => new SequentialMinimalOptimization<Gaussian>()
                 {
-                    // Estimate a suitable guess for the Gaussian kernel's parameters.
-                    // This estimate can serve as a starting point for a grid search.
-                    UseKernelEstimation = true
+                    
                 }
             };
 
