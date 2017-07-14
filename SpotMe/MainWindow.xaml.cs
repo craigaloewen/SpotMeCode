@@ -503,6 +503,18 @@ namespace SpotMe
             double[] inputData = SkeletonModifier.preprocessSkeleton(inBody);
             List<bodyDouble.bones> results = SkeletonModifier.getProblemBones(inputData, spotMeMLAlg.goodForm);
 
+            // Scrub the data so it doesn't draw twice. This isn't the best solution but leaving it in here in case this feature doesn't pan out
+
+            if (results.Contains(bodyDouble.bones.leftBicep) && results.Contains(bodyDouble.bones.leftForearm))
+            {
+                results.Remove(bodyDouble.bones.leftForearm);
+            }
+
+            if (results.Contains(bodyDouble.bones.rightBicep) && results.Contains(bodyDouble.bones.rightForearm))
+            {
+                results.Remove(bodyDouble.bones.rightForearm);
+            }
+
             foreach (bodyDouble.bones problemBone in results)
             {
                 DrawCorrectedLimb(joints, jointPoints, problemBone, spotMeMLAlg.goodForm, drawingContext, drawingPen);
@@ -522,6 +534,7 @@ namespace SpotMe
             Point limbJoint2Point;
 
             JointType baseJointType;
+            JointType currentPositionJoint;
 
             switch (inBone)
             {
@@ -529,12 +542,15 @@ namespace SpotMe
                 case bodyDouble.bones.leftForearm:
 
                     baseJointType = JointType.ShoulderLeft;
-                    
+                    currentPositionJoint = JointType.WristLeft;
+
+
                     break;
                 case bodyDouble.bones.rightBicep:
                 case bodyDouble.bones.rightForearm:
 
                     baseJointType = JointType.ShoulderRight;
+                    currentPositionJoint = JointType.WristRight;
 
                     break;
                 default:
@@ -569,6 +585,10 @@ namespace SpotMe
             // Draw joints
             drawingContext.DrawLine(this.bodyColors[0], jointPoints[baseJointType], limbJoint1Point);
             drawingContext.DrawLine(this.bodyColors[0], limbJoint1Point, limbJoint2Point);
+
+            // Draw line back to good form
+            drawingContext.DrawLine(this.bodyColors[1], jointPoints[currentPositionJoint], limbJoint2Point);
+
         }
 
         /// <summary>
