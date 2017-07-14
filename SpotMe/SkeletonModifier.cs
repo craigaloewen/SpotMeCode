@@ -12,44 +12,7 @@ using Accord.MachineLearning.VectorMachines;
 
 namespace SpotMe
 {
-    /// <summary>
-    /// Emulates the 3D positions of a skeleton like a Body class, but is created from training data
-    /// </summary>
-    public class bodyDouble
-    {
-        public enum joints
-        {
-            spineShoulder,
-            leftShoulder,
-            leftElbow,
-            leftWrist,
-            rightShoulder,
-            rightElbow,
-            rightWrist,
-            spineBase,
-            leftHip,
-            leftKnee,
-            leftAnkle,
-            rightHip,
-            rightKnee,
-            rightAnkle
-        };
-
-        // Ordered to reflect the order that it is put into the classification data (do not change the order around!)
-        public enum bones
-        {
-            leftBicep,
-            leftForearm,
-            leftThigh,
-            leftShin,
-            rightBicep,
-            rightForearm,
-            rightThigh,
-            rightShin
-        };
-
-        public Dictionary<joints, Vector3> jointList = new Dictionary<joints, Vector3>();
-    }
+    
 
     /// <summary>
     /// Static class containing functions to modify Body (Skeleton data) into different forms (most notably training data)
@@ -138,6 +101,13 @@ namespace SpotMe
         // PUBLIC FUNCTIONS
         // ----------------
 
+        /// <summary>
+        /// Outputs a vector that points in the direction needed to change the vector of the bone of compareSkeleton to the bone of acceptedSKeleton
+        /// </summary>
+        /// <param name="inBone">The bone to do the comparison on each skeleton</param>
+        /// <param name="compareSkeleton">The base point skeleton</param>
+        /// <param name="acceptedSkeleton">The skeleton that the direction will point towards</param>
+        /// <returns></returns>
         public static Vector3 getBoneCorrectionDirection(bodyDouble.bones inBone, double[] compareSkeleton, double[] acceptedSkeleton)
         {
             Vector3 returnVector, compareVector, acceptedVector;
@@ -153,6 +123,12 @@ namespace SpotMe
             return returnVector;
         }
 
+        /// <summary>
+        /// Compare two machine learning data skeletons and output a list of the bones that differ by a certain angle
+        /// </summary>
+        /// <param name="compareSkeleton">The skeleton you wish to compare to a base</param>
+        /// <param name="acceptedSkeleton">The accepted skeleton or base skeleton</param>
+        /// <returns></returns>
         public static List<bodyDouble.bones> getProblemBones(double[] compareSkeleton, double[] acceptedSkeleton)
         {
             List<bodyDouble.bones> returnList = new List<bodyDouble.bones>();
@@ -170,6 +146,15 @@ namespace SpotMe
             return returnList;
         }
 
+        /// <summary>
+        /// Takes in a bone and machine learning data and generates the 3D positions of the two limb joints for the limb that the bone belongs to
+        /// </summary>
+        /// <param name="acceptedSkeletonData">Machine learning data</param>
+        /// <param name="inBone">The bone for the limb to display</param>
+        /// <param name="basePoint">The point where the limb starts</param>
+        /// <param name="limbPoint1">An output of the 3D Position of the first joint of the limb</param>
+        /// <param name="limbPoint2">An output of the 3D Position of the second joint of the limb</param>
+        /// <returns></returns>
         public static bool generateLimbPositionsFromBone(double[] acceptedSkeletonData, bodyDouble.bones inBone, Vector3 basePoint, out Vector3 limbPoint1, out Vector3 limbPoint2)
         {
             Vector3 limbPoint1Direction;
@@ -206,6 +191,11 @@ namespace SpotMe
             return true;
         }
 
+        /// <summary>
+        /// Takes in data from a machine learning algorithm and outputs an approximation of the 3D skeleton for that data
+        /// </summary>
+        /// <param name="inputTrainingData">Input machine learning algorithm data</param>
+        /// <returns>Outputted 3D skeleton</returns>
         public static bodyDouble trainingDataTo3DSkeleton(double[] inputTrainingData)
         {
             bodyDouble returnBody = new bodyDouble();
@@ -257,6 +247,12 @@ namespace SpotMe
 
             return returnBody;
         }
+
+        /// <summary>
+        /// Changes skeleton data into an array of doubles that can be interpreted by a machine learning algorithm
+        /// </summary>
+        /// <param name="inBody">Input body to process</param>
+        /// <returns>Outputted machine learning algorithm data</returns>
         public static double[] preprocessSkeleton(Body inBody)
         {
             // Possibly do not local coordinate the bicep vectors based upon the shoulders
@@ -314,11 +310,6 @@ namespace SpotMe
             }
 
             return classificationDataArray;
-        }
-
-        public static void debugMethod(Body inBody)
-        {
-            trainingDataTo3DSkeleton(preprocessSkeleton(inBody));
         }
 
     }
