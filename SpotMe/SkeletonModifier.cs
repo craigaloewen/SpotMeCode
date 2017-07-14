@@ -6,38 +6,23 @@ using System.Threading.Tasks;
 using Microsoft.Kinect;
 using System.Numerics;
 using Accord.MachineLearning;
+using Accord.MachineLearning.VectorMachines.Learning;
+using Accord.Statistics.Kernels;
+using Accord.MachineLearning.VectorMachines;
 
 namespace SpotMe
 {
-    public class bodyDouble
-    {
-        public enum joints
-        {
-            spineShoulder,
-            leftShoulder,
-            leftElbow,
-            leftWrist,
-            rightShoulder,
-            rightElbow,
-            rightWrist,
-            spineBase,
-            leftHip,
-            leftKnee,
-            leftAnkle,
-            rightHip,
-            rightKnee,
-            rightAnkle
-        };
+    
 
-        public Dictionary<joints, Vector3> jointList = new Dictionary<joints, Vector3>();
-    }
+    /// <summary>
+    /// Static class containing functions to modify Body (Skeleton data) into different forms (most notably training data)
+    /// </summary>
     static class SkeletonModifier
     {
-        private static int testNum = 0;
-        private static double[][] testArray = new double[3][];
+        //------------------
+        // PRIVATE FUNCTIONS
+        //------------------
 
-        private static KMeans kmeansAlg;
-        private static KMeansClusterCollection clusters;
         private static void getVector3Angles(out double angleYX, out double angleXZ, Vector3 inputVector)
         {
             angleYX = Math.Atan2(inputVector.Z, inputVector.X);
@@ -79,31 +64,165 @@ namespace SpotMe
 
             return rotateVectorAroundYthenZ(angleToXYPlane, angleToXZPlane, vectorToLocalize);
         }
+
+        private static double dotProductVectors(Vector3 vectorA, Vector3 vectorB)
+        {
+            double returnValue = (vectorA.X * vectorB.X + vectorA.Y * vectorB.Y + vectorA.Z * vectorB.Z);
+            
+            if (returnValue > 1)
+            {
+                returnValue = 1;
+            }
+
+            return returnValue;
+        }
+
+        private static double getAngleBetweenVectors(Vector3 vectorA, Vector3 vectorB)
+        {
+            return Math.Acos(dotProductVectors(vectorA,vectorB));
+        }
+        private static double[] getSkeletonAngles(double[] compareSkeleton, double[] acceptedSkeleton)
+        {
+            double[] vectorAngles = new double[compareSkeleton.Length / 3];
+
+            Vector3 compareVector, acceptVector;
+
+            for (int i = 0; i < vectorAngles.Length; i++)
+            {
+                compareVector = new Vector3((float)compareSkeleton[i * 3], (float)compareSkeleton[i * 3 + 1], (float)compareSkeleton[i * 3 + 2]);
+                acceptVector = new Vector3((float)acceptedSkeleton[i * 3], (float)acceptedSkeleton[i * 3 + 1], (float)acceptedSkeleton[i * 3 + 2]);
+                vectorAngles[i] = getAngleBetweenVectors(compareVector, acceptVector);
+            }
+
+            return vectorAngles;
+        }
+
+        // ----------------
+        // PUBLIC FUNCTIONS
+        // ----------------
+
+        /// <summary>
+        /// Outputs a vector that points in the direction needed to change the vector of the bone of compareSkeleton to the bone of acceptedSKeleton
+        /// </summary>
+        /// <param name="inBone">The bone to do the comparison on each skeleton</param>
+        /// <param name="compareSkeleton">The base point skeleton</param>
+        /// <param name="acceptedSkeleton">The skeleton that the direction will point towards</param>
+        /// <returns></returns>
+        public static Vector3 getBoneCorrectionDirection(bodyDouble.bones inBone, double[] compareSkeleton, double[] acceptedSkeleton)
+        {
+            Vector3 returnVector, compareVector, acceptedVector;
+            int boneIndex = (int)inBone;
+            boneIndex *= 3; // To account for X Y and Z
+
+            compareVector = new Vector3((float)compareSkeleton[boneIndex], (float)compareSkeleton[boneIndex + 1], (float)compareSkeleton[boneIndex + 2]);
+            acceptedVector = new Vector3((float)acceptedSkeleton[boneIndex], (float)acceptedSkeleton[boneIndex + 1], (float)acceptedSkeleton[boneIndex + 2]);
+
+            returnVector = acceptedVector - compareVector;
+            returnVector = Vector3.Normalize(returnVector);
+
+            return returnVector;
+        }
+
+        /// <summary>
+        /// Compare two machine learning data skeletons and output a list of the bones that differ by a certain angle
+        /// </summary>
+        /// <param name="compareSkeleton">The skeleton you wish to compare to a base</param>
+        /// <param name="acceptedSkeleton">The accepted skeleton or base skeleton</param>
+        /// <returns></returns>
+        public static List<bodyDouble.bones> getProblemBones(double[] compareSkeleton, double[] acceptedSkeleton)
+        {
+            List<bodyDouble.bones> returnList = new List<bodyDouble.bones>();
+
+            double[] boneAngles = getSkeletonAngles(compareSkeleton, acceptedSkeleton);
+
+            for (int i = 0; i < boneAngles.Length; i++)
+            {
+                if (boneAngles[i] > 0.52) // 30 degs 
+                {
+                    returnList.Add((bodyDouble.bones)i);
+                }
+            }
+
+            return returnList;
+        }
+
+        /// <summary>
+        /// Takes in a bone and machine learning data and generates the 3D positions of the two limb joints for the limb that the bone belongs to
+        /// </summary>
+        /// <param name="acceptedSkeletonData">Machine learning data</param>
+        /// <param name="inBone">The bone for the limb to display</param>
+        /// <param name="basePoint">The point where the limb starts</param>
+        /// <param name="limbPoint1">An output of the 3D Position of the first joint of the limb</param>
+        /// <param name="limbPoint2">An output of the 3D Position of the second joint of the limb</param>
+        /// <returns></returns>
+        public static bool generateLimbPositionsFromBone(double[] acceptedSkeletonData, bodyDouble.bones inBone, Vector3 basePoint, out Vector3 limbPoint1, out Vector3 limbPoint2)
+        {
+            Vector3 limbPoint1Direction;
+            Vector3 limbPoint2Direction;
+
+            double angleYX, angleXZ;
+
+            switch (inBone)
+            {
+                case bodyDouble.bones.leftBicep:
+                case bodyDouble.bones.leftForearm:
+                    limbPoint1Direction = new Vector3((float)acceptedSkeletonData[0], (float)acceptedSkeletonData[1], (float)acceptedSkeletonData[2]);
+                    limbPoint2Direction = new Vector3((float)acceptedSkeletonData[3], (float)acceptedSkeletonData[4], (float)acceptedSkeletonData[5]);
+                    
+                    break;
+                case bodyDouble.bones.rightBicep:
+                case bodyDouble.bones.rightForearm:
+                    limbPoint1Direction = new Vector3((float)acceptedSkeletonData[12], (float)acceptedSkeletonData[13], (float)acceptedSkeletonData[14]);
+                    limbPoint2Direction = new Vector3((float)acceptedSkeletonData[15], (float)acceptedSkeletonData[16], (float)acceptedSkeletonData[17]);
+
+                    break;
+                default:
+                    limbPoint1 = new Vector3();
+                    limbPoint2 = new Vector3();
+                    return false;
+            }
+
+            getVector3Angles(out angleYX, out angleXZ, limbPoint1Direction);
+            limbPoint2Direction = rotateVectorAroundZthenY(-angleYX, -angleXZ, limbPoint2Direction);
+
+            limbPoint1 = basePoint + ( limbPoint1Direction * ( (float) 0.3 ) );
+            limbPoint2 = limbPoint1 + ( limbPoint2Direction * ( (float) 0.3 ) );
+
+            return true;
+        }
+
+        /// <summary>
+        /// Takes in data from a machine learning algorithm and outputs an approximation of the 3D skeleton for that data
+        /// </summary>
+        /// <param name="inputTrainingData">Input machine learning algorithm data</param>
+        /// <returns>Outputted 3D skeleton</returns>
         public static bodyDouble trainingDataTo3DSkeleton(double[] inputTrainingData)
         {
             bodyDouble returnBody = new bodyDouble();
 
             double angleYX, angleXZ;
 
-            Vector3 rightBicepDirection = new Vector3((float)inputTrainingData[0], (float)inputTrainingData[1], (float)inputTrainingData[2]);
-            getVector3Angles(out angleYX, out angleXZ, rightBicepDirection);
-            Vector3 rightForearmDirection = new Vector3((float)inputTrainingData[3], (float)inputTrainingData[4], (float)inputTrainingData[5]);
-            rightForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightForearmDirection);
-
-            Vector3 rightThighDirection = new Vector3((float)inputTrainingData[6], (float)inputTrainingData[7], (float)inputTrainingData[8]);
-            getVector3Angles(out angleYX, out angleXZ, rightThighDirection);
-            Vector3 rightShinDirection = new Vector3((float)inputTrainingData[9], (float)inputTrainingData[10], (float)inputTrainingData[11]);
-            rightShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightShinDirection);
-
-            Vector3 leftBicepDirection = new Vector3((float)inputTrainingData[12], (float)inputTrainingData[13], (float)inputTrainingData[14]);
+            Vector3 leftBicepDirection = new Vector3((float)inputTrainingData[0], (float)inputTrainingData[1], (float)inputTrainingData[2]);
             getVector3Angles(out angleYX, out angleXZ, leftBicepDirection);
-            Vector3 leftForearmDirection = new Vector3((float)inputTrainingData[15], (float)inputTrainingData[16], (float)inputTrainingData[17]);
+            Vector3 leftForearmDirection = new Vector3((float)inputTrainingData[3], (float)inputTrainingData[4], (float)inputTrainingData[5]);
             leftForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, leftForearmDirection);
 
-            Vector3 leftThighDirection = new Vector3((float)inputTrainingData[18], (float)inputTrainingData[19], (float)inputTrainingData[20]);
+            Vector3 leftThighDirection = new Vector3((float)inputTrainingData[6], (float)inputTrainingData[7], (float)inputTrainingData[8]);
             getVector3Angles(out angleYX, out angleXZ, leftThighDirection);
-            Vector3 leftShinDirection= new Vector3((float)inputTrainingData[21], (float)inputTrainingData[22], (float)inputTrainingData[23]);
+            Vector3 leftShinDirection = new Vector3((float)inputTrainingData[9], (float)inputTrainingData[10], (float)inputTrainingData[11]);
             leftShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, leftShinDirection);
+
+            Vector3 rightBicepDirection = new Vector3((float)inputTrainingData[12], (float)inputTrainingData[13], (float)inputTrainingData[14]);
+            //rightBicepDirection = rotateVectorAroundZthenY(-3.14159, 0, rightBicepDirection);
+            getVector3Angles(out angleYX, out angleXZ, rightBicepDirection);
+            Vector3 rightForearmDirection = new Vector3((float)inputTrainingData[15], (float)inputTrainingData[16], (float)inputTrainingData[17]);
+            rightForearmDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightForearmDirection);
+
+            Vector3 rightThighDirection = new Vector3((float)inputTrainingData[18], (float)inputTrainingData[19], (float)inputTrainingData[20]);
+            //rightThighDirection = rotateVectorAroundZthenY(-3.14159, 0, rightThighDirection);
+            getVector3Angles(out angleYX, out angleXZ, rightThighDirection);
+            Vector3 rightShinDirection= new Vector3((float)inputTrainingData[21], (float)inputTrainingData[22], (float)inputTrainingData[23]);
+            rightShinDirection = rotateVectorAroundZthenY(-angleYX, -angleXZ, rightShinDirection);
 
             returnBody.jointList[bodyDouble.joints.spineShoulder] = new Vector3((float)-0.5, (float)0.5, 2);
             returnBody.jointList[bodyDouble.joints.spineBase] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3(0, (float)-0.5, 0));
@@ -128,17 +247,20 @@ namespace SpotMe
 
             return returnBody;
         }
-        public static void firstRun()
-        {
-            kmeansAlg = new KMeans(3);
-        }
+
+        /// <summary>
+        /// Changes skeleton data into an array of doubles that can be interpreted by a machine learning algorithm
+        /// </summary>
+        /// <param name="inBody">Input body to process</param>
+        /// <returns>Outputted machine learning algorithm data</returns>
         public static double[] preprocessSkeleton(Body inBody)
         {
-
-            //TODO Offset shoulder tilt (when they lean to one side or the other)
+            // Possibly do not local coordinate the bicep vectors based upon the shoulders
+            // And instead consider the shoulders as unit vectors in the pos and nev
+            // x directions and see if that improves recognition
 
             Vector3 leftShoulder = vectorizeTwoJoints(JointType.ShoulderLeft, JointType.SpineShoulder, inBody);
-            Vector3 rightShoulder = vectorizeTwoJoints(JointType.ShoulderLeft, JointType.SpineShoulder, inBody);
+            Vector3 rightShoulder = vectorizeTwoJoints(JointType.ShoulderRight, JointType.SpineShoulder, inBody);
 
             Vector3 leftBicep = vectorizeTwoJoints(JointType.ElbowLeft, JointType.ShoulderLeft, inBody);
             Vector3 rightBicep = vectorizeTwoJoints(JointType.ElbowRight, JointType.ShoulderRight, inBody);
@@ -168,14 +290,14 @@ namespace SpotMe
             Vector3 rightShinRotated = localCoordVector(rightShin, rightThigh);
 
             List<Vector3> classificationDataList = new List<Vector3>();
-            classificationDataList.Add(leftBicepRotated);
+            classificationDataList.Add(leftBicep); // Used to be rotated
             classificationDataList.Add(leftForearmRotated);
-            classificationDataList.Add(leftThighRotated);
+            classificationDataList.Add(leftThigh); // Used to be rotated
             classificationDataList.Add(leftShinRotated);
 
-            classificationDataList.Add(rightBicepRotated);
+            classificationDataList.Add(rightBicep); // Used to be rotated
             classificationDataList.Add(rightForearmRotated);
-            classificationDataList.Add(rightThighRotated);
+            classificationDataList.Add(rightThigh); // Used to be rotated
             classificationDataList.Add(rightShinRotated);
 
             double[] classificationDataArray = new double[24];
@@ -188,11 +310,6 @@ namespace SpotMe
             }
 
             return classificationDataArray;
-        }
-
-        public static void debugMethod(Body inBody)
-        {
-            trainingDataTo3DSkeleton(preprocessSkeleton(inBody));
         }
 
     }
