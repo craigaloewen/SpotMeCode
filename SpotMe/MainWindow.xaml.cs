@@ -386,15 +386,17 @@ namespace SpotMe
                             // Put your debugging code here to execute each time a skeleton is drawn
                             DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
                             DrawFormCorrection(joints, jointPoints, body, dc, drawPen);
-                            
 
+                            // This is some hacked together code to store training data and test functions. It's not reliable for production use but fine for testing.
+
+                            // Inputs a body to test if it has paused
+                            spotMeMLAlg.hasBodyPaused(body);
+
+                            // Outputs some debug information
                             trainingDataLabel.Content = spotMeMLAlg.getClassPrediction(body).ToString();
                             //trainingDataLabel.Content = storeTrainingDataHACKNum;
                             //trainingDataLabel.Content = Math.Round(spotMeMLAlg.movementIndexValue,3);
-
-                            spotMeMLAlg.hasBodyPaused(body);
-
-                            // Some hack code to store the skeleton data (DO NOT USE, NOT RELIABLE)
+                            
                             if ((storeTrainingDataHACKNum) >= -1000)
                             {
                                 if ((storeTrainingDataHACKNum % 100 == 0) && (storeTrainingDataHACKNum >= 0))
@@ -411,6 +413,7 @@ namespace SpotMe
                                     storeTrainingDataHACKNum = -1001;
                                 }
                             }
+                            // End of the hacked together code
                             
                         }
                     }
@@ -699,6 +702,12 @@ namespace SpotMe
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
+
+
+        // -----------
+        // Here is a bunch of debugging functions that I made to get stuff working in the interim. - Craig
+        // ------------
+
 
         private void loadTrainingData(object sender, RoutedEventArgs e)
         {

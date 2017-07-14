@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// Stores all the information necessary to describe a classifier of an exercise's form
+    /// </summary>
     class Classifier
     {
         public string name;

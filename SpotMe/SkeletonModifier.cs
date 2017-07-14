@@ -12,6 +12,9 @@ using Accord.MachineLearning.VectorMachines;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// Emulates the 3D positions of a skeleton like a Body class, but is created from training data
+    /// </summary>
     public class bodyDouble
     {
         public enum joints
@@ -47,6 +50,10 @@ namespace SpotMe
 
         public Dictionary<joints, Vector3> jointList = new Dictionary<joints, Vector3>();
     }
+
+    /// <summary>
+    /// Static class containing functions to modify Body (Skeleton data) into different forms (most notably training data)
+    /// </summary>
     static class SkeletonModifier
     {
         //------------------

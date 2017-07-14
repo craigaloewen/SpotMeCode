@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// A temporary class used to manage training data input and output, will become obselete.
+    /// </summary>
     static class TrainingDataFileManager
     {
 

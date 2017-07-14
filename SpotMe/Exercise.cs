@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// Stores all the data necessary to describe an exercise
+    /// </summary>
     class Exercise
     {
 

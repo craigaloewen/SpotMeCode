@@ -7,6 +7,9 @@ using Microsoft.Kinect;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// A class to store feedback data (such as specific skeletons for each rep)
+    /// </summary>
     class Feedback
     {
         private List<Body> repSkeletonList;

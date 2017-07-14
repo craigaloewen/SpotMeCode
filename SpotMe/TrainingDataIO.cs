@@ -8,6 +8,9 @@ using CsvHelper;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// A temporary class used to input and output training data. Will become obselete
+    /// </summary>
     static class TrainingDataIO
     {
         public static bool saveTrainingData(double[][] inData, string fileName)

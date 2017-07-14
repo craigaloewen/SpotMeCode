@@ -11,6 +11,9 @@ using Microsoft.Kinect;
 
 namespace SpotMe
 {
+    /// <summary>
+    /// The brain behind the Machine Learning of Spot Me, used to determine exercise classification and exercise decision making
+    /// </summary>
     class SpotMeML
     {
 
