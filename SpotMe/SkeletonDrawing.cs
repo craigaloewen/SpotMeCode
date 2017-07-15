@@ -187,8 +187,8 @@ namespace SpotMe
                 jointCamSpacePoint.Y = someVectorPair.Value.Y;
                 jointCamSpacePoint.Z = someVectorPair.Value.Z;
 
-                DepthSpacePoint depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
-                jointPoints[someVectorPair.Key] = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+                ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(jointCamSpacePoint);
+                jointPoints[someVectorPair.Key] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
             }
 
             foreach (bodyDouble.joints jointType in jointPoints.Keys)
@@ -245,7 +245,7 @@ namespace SpotMe
             Vector3 limbJoint2;
 
             CameraSpacePoint jointCamSpacePoint;
-            DepthSpacePoint depthSpacePoint;
+            ColorSpacePoint colorSpacePoint;
             Point limbJoint1Point;
             Point limbJoint2Point;
 
@@ -287,16 +287,16 @@ namespace SpotMe
             jointCamSpacePoint.Y = limbJoint1.Y;
             jointCamSpacePoint.Z = limbJoint1.Z;
 
-            depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
-            limbJoint1Point = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+            colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(jointCamSpacePoint);
+            limbJoint1Point = new Point(colorSpacePoint.X, colorSpacePoint.Y);
 
             // Joint 2
             jointCamSpacePoint.X = limbJoint2.X;
             jointCamSpacePoint.Y = limbJoint2.Y;
             jointCamSpacePoint.Z = limbJoint2.Z;
 
-            depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(jointCamSpacePoint);
-            limbJoint2Point = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+            colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(jointCamSpacePoint);
+            limbJoint2Point = new Point(colorSpacePoint.X, colorSpacePoint.Y);
 
             // Draw joints
             drawingContext.DrawLine(this.bodyColors[0], jointPoints[baseJointType], limbJoint1Point);

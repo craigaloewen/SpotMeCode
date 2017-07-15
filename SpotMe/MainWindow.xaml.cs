@@ -34,7 +34,12 @@ namespace SpotMe
         /// <summary>
         /// Drawing image that we will display
         /// </summary>
-        private DrawingImage imageSource;
+        private DrawingImage bodyFrameSource;
+
+        /// <summary>
+        /// Drawing image that we will display
+        /// </summary>
+        private DrawingImage colorFrameSource;
 
         /// <summary>
         /// Active Kinect sensor
@@ -52,9 +57,19 @@ namespace SpotMe
         private BodyFrameReader bodyFrameReader = null;
 
         /// <summary>
+        /// Reader for color frames
+        /// </summary>
+        private ColorFrameReader colorFrameReader = null;
+
+        /// <summary>
+        /// Bitmap to display
+        /// </summary>
+        private WriteableBitmap colorBitmap = null;
+
+        /// <summary>
         /// Drawing group for body rendering output
         /// </summary>
-        private DrawingGroup drawingGroup;
+        private DrawingGroup bodyFrameDrawingGroup;
 
         /// <summary>
         /// Width of display (depth space)
@@ -108,7 +123,7 @@ namespace SpotMe
             this.coordinateMapper = this.kinectSensor.CoordinateMapper;
 
             // get the depth (display) extents
-            FrameDescription frameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+            FrameDescription frameDescription = this.kinectSensor.ColorFrameSource.FrameDescription;
 
             // get size of joint space
             this.displayWidth = frameDescription.Width;
@@ -116,6 +131,15 @@ namespace SpotMe
 
             // open the reader for the body frames
             this.bodyFrameReader = this.kinectSensor.BodyFrameSource.OpenReader();
+
+            // open the reader for the color frames
+            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
+
+            // create the colorFrameDescription from the ColorFrameSource using Bgra format
+            FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
+
+            // create the bitmap to display
+            this.colorBitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
 
             // set IsAvailableChanged event notifier
             this.kinectSensor.IsAvailableChanged += this.Sensor_IsAvailableChanged;
@@ -128,10 +152,10 @@ namespace SpotMe
                                                             : Properties.Resources.NoSensorStatusText;
 
             // Create the drawing group we'll use for drawing
-            this.drawingGroup = new DrawingGroup();
+            this.bodyFrameDrawingGroup = new DrawingGroup();
 
             // Create an image source that we can use in our image control
-            this.imageSource = new DrawingImage(this.drawingGroup);
+            this.bodyFrameSource = new DrawingImage(this.bodyFrameDrawingGroup);
 
             // use the window object as the view model in this simple example
             this.DataContext = this;
@@ -158,11 +182,22 @@ namespace SpotMe
         /// <summary>
         /// Gets the bitmap to display
         /// </summary>
-        public ImageSource ImageSource
+        public ImageSource BodyImageSource
         {
             get
             {
-                return this.imageSource;
+                return this.bodyFrameSource;
+            }
+        }
+
+        /// <summary>
+        /// Gets the bitmap to display
+        /// </summary>
+        public ImageSource ColorImageSource
+        {
+            get
+            {
+                return this.colorBitmap;
             }
         }
 
@@ -202,8 +237,14 @@ namespace SpotMe
 
             if (this.bodyFrameReader != null)
             {
-                this.bodyFrameReader.FrameArrived += this.Reader_FrameArrived;
+                this.bodyFrameReader.FrameArrived += this.Reader_BodyFrameArrived;
             }
+
+            if (this.colorFrameReader != null)
+            {
+                this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
+            }
+
         }
 
         /// <summary>
@@ -220,6 +261,13 @@ namespace SpotMe
                 this.bodyFrameReader = null;
             }
 
+            if (this.colorFrameReader != null)
+            {
+                // ColorFrameReder is IDisposable
+                this.colorFrameReader.Dispose();
+                this.colorFrameReader = null;
+            }
+
             if (this.kinectSensor != null)
             {
                 this.kinectSensor.Close();
@@ -232,7 +280,7 @@ namespace SpotMe
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-        private void Reader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+        private void Reader_BodyFrameArrived(object sender, BodyFrameArrivedEventArgs e)
         {
             bool dataReceived = false;
 
@@ -255,10 +303,13 @@ namespace SpotMe
 
             if (dataReceived)
             {
-                using (DrawingContext dc = this.drawingGroup.Open())
+                using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
                 {
                     // Draw a transparent background to set the render size
-                    dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+                    //dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+
+                    // Draw the color image onto the frame
+                    dc.DrawImage(ColorImageSource, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                     int penIndex = 0;
                     foreach (Body body in this.bodies)
@@ -267,6 +318,7 @@ namespace SpotMe
 
                         if (body.IsTracked)
                         {
+
                             outputDrawing.DrawClippedEdges(body, dc);
 
                             IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
@@ -284,8 +336,8 @@ namespace SpotMe
                                     position.Z = InferredZPositionClamp;
                                 }
 
-                                DepthSpacePoint depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(position);
-                                jointPoints[jointType] = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+                                ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
+                                jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
                             }
 
                             outputDrawing.DrawBody(joints, jointPoints, dc, drawPen);
@@ -328,7 +380,43 @@ namespace SpotMe
                     }
 
                     // prevent drawing outside of our render area
-                    this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+                    this.bodyFrameDrawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the color frame data arriving from the sensor
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
+        private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
+        {
+
+                // ColorFrame is IDisposable
+                using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
+            {
+                if (colorFrame != null)
+                {
+                    FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+
+                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+                    {
+                        this.colorBitmap.Lock();
+
+                        // verify data and write the new color frame data to the display bitmap
+                        if ((colorFrameDescription.Width == this.colorBitmap.PixelWidth) && (colorFrameDescription.Height == this.colorBitmap.PixelHeight))
+                        {
+                            colorFrame.CopyConvertedFrameDataToIntPtr(
+                                this.colorBitmap.BackBuffer,
+                                (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
+                                ColorImageFormat.Bgra);
+
+                            this.colorBitmap.AddDirtyRect(new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight));
+                        }
+
+                        this.colorBitmap.Unlock();
+                    }
                 }
             }
         }
@@ -437,7 +525,7 @@ namespace SpotMe
 
         private void updateTrainingData()
         {
-            using (DrawingContext dc = this.drawingGroup.Open())
+            using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
             {
                 // Draw a transparent background to set the render size
                 dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
