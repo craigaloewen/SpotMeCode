@@ -14,18 +14,18 @@ namespace SpotMe
     {
         private List<Body> repSkeletonList;
 
-        public bool saveRepSkeleton(Body inBody)
+        public bool SaveRepSkeleton(Body inBody)
         {
             repSkeletonList.Add(inBody);
             return true;
         }
 
-        public IReadOnlyList<Body> getRepSkeletonList()
+        public IReadOnlyList<Body> GetRepSkeletonList()
         {
             return repSkeletonList.AsReadOnly();
         }
 
-        public bool clearRepSkeletonList()
+        public bool ClearRepSkeletonList()
         {
             repSkeletonList = new List<Body>();
             return true;

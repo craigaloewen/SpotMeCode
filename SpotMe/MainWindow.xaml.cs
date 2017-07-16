@@ -348,7 +348,7 @@ namespace SpotMe
                             outputDrawing.DrawHand(body.HandRightState, jointPoints[JointType.HandRight], dc);
 
                             // Put your debugging code here to execute each time a skeleton is drawn
-                            outputDrawing.DrawTrainingDataOuput(dc, SkeletonModifier.trainingDataTo3DSkeleton(SkeletonModifier.preprocessSkeleton(body)),drawPen);
+                            outputDrawing.DrawTrainingDataOuput(dc, SkeletonModifier.TrainingDataTo3DSkeleton(SkeletonModifier.PreprocessSkeleton(body)),drawPen);
                             outputDrawing.DrawFormCorrection(joints, jointPoints, body, spotMeMLAlg.goodForm, dc, drawPen);
 
                             // This is some hacked together code to store training data and test functions. It's not reliable for production use but fine for testing.
@@ -364,7 +364,7 @@ namespace SpotMe
                             {
                                 if ((storeTrainingDataHACKNum % 100 == 0) && (storeTrainingDataHACKNum >= 0))
                                 {
-                                    trainingDataHACKStore[storeTrainingDataHACKNum/100] = SkeletonModifier.preprocessSkeleton(body);
+                                    trainingDataHACKStore[storeTrainingDataHACKNum/100] = SkeletonModifier.PreprocessSkeleton(body);
                                 }
                                 
                                 storeTrainingDataHACKNum++;
@@ -519,7 +519,7 @@ namespace SpotMe
             
             for (int i = 0; i < supportVectors.Length; i++)
             {
-                trainingBodyDoubles.Add(SkeletonModifier.trainingDataTo3DSkeleton(supportVectors[i]));
+                trainingBodyDoubles.Add(SkeletonModifier.TrainingDataTo3DSkeleton(supportVectors[i]));
             }
 
 

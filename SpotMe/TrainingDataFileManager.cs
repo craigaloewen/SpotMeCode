@@ -26,7 +26,7 @@ namespace SpotMe
 
             for (int i = 0; i < fileOutput.Length; i++)
             {
-                returnList.Add(SkeletonModifier.trainingDataTo3DSkeleton(fileOutput[i]));
+                returnList.Add(SkeletonModifier.TrainingDataTo3DSkeleton(fileOutput[i]));
             }
 
             return returnList;
@@ -49,7 +49,7 @@ namespace SpotMe
 
             for (int i = 0; i < outputData.Length; i++)
             {
-                returnList.Add(SkeletonModifier.trainingDataTo3DSkeleton(outputData[i]));
+                returnList.Add(SkeletonModifier.TrainingDataTo3DSkeleton(outputData[i]));
             }
 
             return returnList;

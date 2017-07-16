@@ -216,8 +216,11 @@ namespace SpotMe
         public void DrawFormCorrection(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, Body inBody, double[] acceptedForm, DrawingContext drawingContext, Pen drawingPen)
         {
 
-            double[] inputData = SkeletonModifier.preprocessSkeleton(inBody);
-            List<bodyDouble.bones> results = SkeletonModifier.getProblemBones(inputData, acceptedForm);
+            double[] inputData = SkeletonModifier.PreprocessSkeleton(inBody);
+            double bodyAngle = SkeletonModifier.GetBodyAngle(inBody);
+
+            List<bodyDouble.bones> results = SkeletonModifier.GetProblemBonesWithBodyRotation(inputData, acceptedForm,bodyAngle);
+
 
             // Scrub the data so it doesn't draw twice. This isn't the best solution but leaving it in here in case this feature doesn't pan out
 
@@ -233,11 +236,11 @@ namespace SpotMe
 
             foreach (bodyDouble.bones problemBone in results)
             {
-                DrawCorrectedLimb(joints, jointPoints, problemBone, acceptedForm, drawingContext, drawingPen);
+                DrawCorrectedLimb(joints, jointPoints, problemBone, acceptedForm, bodyAngle, drawingContext, drawingPen);
             }
         }
 
-        public void DrawCorrectedLimb(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, bodyDouble.bones inBone, double[] acceptedForm, DrawingContext drawingContext, Pen drawingPen)
+        private void DrawCorrectedLimb(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, bodyDouble.bones inBone, double[] acceptedForm, double bodyAngle, DrawingContext drawingContext, Pen drawingPen)
         {
 
             Vector3 baseJoint = new Vector3();
@@ -278,7 +281,7 @@ namespace SpotMe
             baseJoint.Y = joints[baseJointType].Position.Y;
             baseJoint.Z = joints[baseJointType].Position.Z;
 
-            SkeletonModifier.generateLimbPositionsFromBone(acceptedForm, inBone, baseJoint, out limbJoint1, out limbJoint2);
+            SkeletonModifier.GenerateLimbPositionsFromBone(acceptedForm, inBone, baseJoint, bodyAngle, out limbJoint1, out limbJoint2);
 
             // Joint 1
             jointCamSpacePoint = new CameraSpacePoint();

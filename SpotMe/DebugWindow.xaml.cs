@@ -43,11 +43,11 @@ namespace SpotMe
             double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
             double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
 
-            List<bodyDouble.bones> problemBones = SkeletonModifier.getProblemBones(inputData[0], inputData[3]);
+            List<bodyDouble.bones> problemBones = SkeletonModifier.GetProblemBones(inputData[0], inputData[3]);
 
             foreach (bodyDouble.bones someBone in problemBones)
             {
-                System.Numerics.Vector3 result = SkeletonModifier.getBoneCorrectionDirection(someBone, inputData[0], inputData[3]);
+                System.Numerics.Vector3 result = SkeletonModifier.GetBoneCorrectionDirection(someBone, inputData[0], inputData[3]);
             }
 
         }
