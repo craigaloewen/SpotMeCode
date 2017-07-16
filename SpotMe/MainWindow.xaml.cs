@@ -311,6 +311,8 @@ namespace SpotMe
                     // Draw the color image onto the frame
                     dc.DrawImage(ColorImageSource, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
+                    //updateTrainingDataWithGivenDrawingContext(dc);
+
                     int penIndex = 0;
                     foreach (Body body in this.bodies)
                     {
@@ -357,7 +359,7 @@ namespace SpotMe
                             trainingDataLabel.Content = spotMeMLAlg.getClassPrediction(body).ToString();
                             //trainingDataLabel.Content = storeTrainingDataHACKNum;
                             //trainingDataLabel.Content = Math.Round(spotMeMLAlg.movementIndexValue,3);
-                            
+
                             if ((storeTrainingDataHACKNum) >= -1000)
                             {
                                 if ((storeTrainingDataHACKNum % 100 == 0) && (storeTrainingDataHACKNum >= 0))
@@ -539,6 +541,22 @@ namespace SpotMe
                     trainingDataLabel.Content = ("Success " + (trainingBodyDoublesIndex+1) + " of " + trainingBodyDoubles.Count.ToString());
                     outputDrawing.DrawTrainingDataOuput(dc, trainingBodyDoubles[trainingBodyDoublesIndex], outputDrawing.bodyColors[0]);
                 }
+            }
+        }
+
+        private void updateTrainingDataWithGivenDrawingContext(DrawingContext dc)
+        {
+            // Draw a transparent background to set the render size
+            dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+
+            if (trainingBodyDoubles.Count < 1)
+            {
+                trainingDataLabel.Content = "Failure to Open";
+            }
+            else
+            {
+                trainingDataLabel.Content = ("Success " + (trainingBodyDoublesIndex + 1) + " of " + trainingBodyDoubles.Count.ToString());
+                outputDrawing.DrawTrainingDataOuput(dc, trainingBodyDoubles[trainingBodyDoublesIndex], outputDrawing.bodyColors[0]);
             }
         }
     }

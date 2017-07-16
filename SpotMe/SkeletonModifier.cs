@@ -259,6 +259,8 @@ namespace SpotMe
             // And instead consider the shoulders as unit vectors in the pos and nev
             // x directions and see if that improves recognition
 
+            // SHould do some kind of processing to determine if the person is rotated and reject that
+
             Vector3 leftShoulder = vectorizeTwoJoints(JointType.ShoulderLeft, JointType.SpineShoulder, inBody);
             Vector3 rightShoulder = vectorizeTwoJoints(JointType.ShoulderRight, JointType.SpineShoulder, inBody);
 
