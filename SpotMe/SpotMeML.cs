@@ -92,7 +92,7 @@ namespace SpotMe
         public int getClassPrediction(Body inBody)
         {
 
-            double[] inputData = SkeletonModifier.PreprocessSkeleton(inBody);
+            double[] inputData = SkeletonModifier.preprocessSkeleton(inBody);
 
             int prediction = machine.Decide(inputData);
             double probability = machine.Score(inputData);
@@ -121,7 +121,7 @@ namespace SpotMe
 
         public bool hasBodyPaused(Body inBody)
         {
-            double[] currentInput = SkeletonModifier.PreprocessSkeleton(inBody);
+            double[] currentInput = SkeletonModifier.preprocessSkeleton(inBody);
 
             // Test if this is the first run
             if (lastKnownInput == null)
