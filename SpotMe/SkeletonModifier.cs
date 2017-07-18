@@ -70,7 +70,9 @@ namespace SpotMe
         }
         private static Vector3 LocalCoordVector(Vector3 vectorToLocalize, Vector3 baseVector)
         {
-            GetVector3Angles(out double angleToXYPlane, out double angleToXZPlane, baseVector);
+            double angleToXYPlane, angleToXZPlane;
+
+            GetVector3Angles(out angleToXYPlane, out angleToXZPlane, baseVector);
 
             return RotateVectorAroundYthenZ(angleToXYPlane, angleToXZPlane, vectorToLocalize);
         }
@@ -163,10 +165,11 @@ namespace SpotMe
         /// <returns></returns>
         public static double GetBodyAngle(Body inBody)
         {
+            double angleYX, angleXZ;
 
             Vector3 rightShoulder = VectorizeTwoJoints(JointType.ShoulderRight, JointType.SpineShoulder, inBody);
 
-            GetVector3Angles(out double angleYX, out double angleXZ, rightShoulder);
+            GetVector3Angles(out angleYX, out angleXZ, rightShoulder);
 
             return angleYX;
         }
