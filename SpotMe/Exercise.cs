@@ -22,7 +22,35 @@ namespace SpotMe
 
         public string contractedFormData { get; set; }
 
+        [NotMapped]
+        public double[] contractedForm
+        {
+            get
+            {
+                return Array.ConvertAll(contractedFormData.Split(';'), Double.Parse);
+            }
+            set
+            {
+                double[] _data = value;
+                contractedFormData = String.Join(";", _data.Select(p => p.ToString()).ToArray());
+            }
+        }
+
         public string extendedFormata { get; set; }
+
+        [NotMapped]
+        public double[] extendedForm
+        {
+            get
+            {
+                return Array.ConvertAll(extendedFormata.Split(';'), Double.Parse);
+            }
+            set
+            {
+                double[] _data = value;
+                extendedFormata = String.Join(";", _data.Select(p => p.ToString()).ToArray());
+            }
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Classifier> Classifiers { get; set; }
