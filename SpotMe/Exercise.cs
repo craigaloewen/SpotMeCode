@@ -1,34 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace SpotMe
 {
-    /// <summary>
-    /// Stores all the data necessary to describe an exercise
-    /// </summary>
-    class Exercise
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Exercises")]
+    public partial class Exercise
     {
-
-        public string exerciseName;
-        public double[] contractedForm;
-        public double[] extendedForm;
-        public List<Classifier> classifierList;
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Exercise()
         {
-
+            Classifiers = new HashSet<Classifier>();
         }
 
-        public Exercise(string inName, double[] inContractedForm, double[] inExtendedForm, List<Classifier> inClassifierList)
-        {
-            exerciseName = inName;
-            contractedForm = inContractedForm;
-            extendedForm = inExtendedForm;
-            classifierList = inClassifierList;
-        }
+        [Key]
+        public int exerciseId { get; set; }
 
+        public string exerciseName { get; set; }
+
+        public string contractedFormData { get; set; }
+
+        public string extendedFormata { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Classifier> Classifiers { get; set; }
     }
 }

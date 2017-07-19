@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace SpotMe
 {
-    /// <summary>
-    /// Stores all the information necessary to describe a classifier of an exercise's form
-    /// </summary>
-    class Classifier
-    {
-        public string name;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
 
-        public Classifier(string inName)
-        {
-            name = inName;
-        }
+    public partial class Classifier
+    {
+        public int classifierId { get; set; }
+
+        public string classifierName { get; set; }
+
+        public int exerciseId { get; set; }
+
+        public virtual Exercise Exercis { get; set; }
     }
 }
