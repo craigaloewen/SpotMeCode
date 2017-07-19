@@ -8,7 +8,7 @@ Please note that currently the master branch has code that isn't complete and is
 # Setup
 
 <ol>
-  <li>Install SQL Server Express, selection 'Basic' in installation type.</li>
+  <li>Install SQL Server Express 2016, selection 'Basic' in installation type.</li>
   <li>Install SQL Server Management Studio 17.</li>
   <li>Launch SQL Server Management Studio 17 and click Cancel on the Connect window.</li>
   <li>View -> Registered Servers. On the Registered Servers Panel expand Database Enginer.</li>
