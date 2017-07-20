@@ -1,4 +1,4 @@
-#Spot Me 
+# Spot Me 
 
 This repo contains all the source code for the Spot Me project.
 
