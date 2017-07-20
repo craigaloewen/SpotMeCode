@@ -11,23 +11,34 @@ namespace SpotMe
     /// </summary>
     class Exercise
     {
-
-        public string exerciseName;
+        private string exerciseName;
+        public string name
+        {
+            get
+            {
+                return exerciseName;
+            }
+            set
+            {
+                exerciseName = value.ToUpper();
+                foreach (Classifier c in classifierData)
+                {
+                    c.exerciseName = exerciseName;
+                }
+            }
+        }
         public double[] contractedForm;
         public double[] extendedForm;
-        public List<Classifier> classifierList;
+        public List<Classifier> classifierData;
 
-        public Exercise()
-        {
-
-        }
+        public Exercise() { }
 
         public Exercise(string inName, double[] inContractedForm, double[] inExtendedForm, List<Classifier> inClassifierList)
         {
-            exerciseName = inName;
+            name = inName;
             contractedForm = inContractedForm;
             extendedForm = inExtendedForm;
-            classifierList = inClassifierList;
+            classifierData = inClassifierList;
         }
 
     }

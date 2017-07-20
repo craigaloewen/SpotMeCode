@@ -96,6 +96,7 @@
     <Compile Include="SkeletonDrawing.cs" />
     <Compile Include="SkeletonModifier.cs" />
     <Compile Include="SpotMeML.cs" />
+    <Compile Include="TrainingData.cs" />
     <Compile Include="TrainingDataFileManager.cs" />
     <Compile Include="TrainingDataIO.cs" />
     <Page Include="DebugWindow.xaml">
