@@ -47,7 +47,7 @@ namespace SpotMe
 
 
             Exercise selectedExercise = new SpotMe.Exercise();
-            selectedExercise.contractedForm = new double[24] { -1,0,0,1,0,0,-1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 };
+            selectedExercise.contractedForm = new double[24] { 0,1,0,1,0,0,0,-1,0,1,0,0,0,1,0,1,0,0,0,-1,0,1,0,0 };
             bodyDouble inputBody = SkeletonModifier.TrainingDataTo3DSkeleton(selectedExercise.contractedForm);
 
             // Create the drawing group we'll use for drawing

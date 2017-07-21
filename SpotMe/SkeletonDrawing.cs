@@ -25,6 +25,11 @@ namespace SpotMe
         private const double JointThickness = 3;
 
         /// <summary>
+        /// Thickness of drawn joint lines
+        /// </summary>
+        private const double previewImageJointThickness = 2;
+
+        /// <summary>
         /// Thickness of clip edge rectangles
         /// </summary>
         private const double ClipBoundsThickness = 10;
@@ -181,14 +186,14 @@ namespace SpotMe
 
             foreach (KeyValuePair<bodyDouble.joints, System.Numerics.Vector3> someVectorPair in inBodyDouble.jointList)
             {
-                double xValue = ( (someVectorPair.Value.X + 2 ) / 3) * outputWidth;
-                double yValue = outputHeight - ( (someVectorPair.Value.Y + 2 ) / 3) * outputWidth;
+                double xValue = ( (someVectorPair.Value.X + 1 ) / 2) * outputWidth;
+                double yValue = outputHeight - ( (someVectorPair.Value.Y + 1.5 ) / 2.5) * outputWidth;
                 jointPoints[someVectorPair.Key] = new Point(xValue, yValue);
             }
 
             foreach (bodyDouble.joints jointType in jointPoints.Keys)
             {
-                drawingContext.DrawEllipse(this.trackedJointBrush, null, jointPoints[jointType], JointThickness, JointThickness);
+                drawingContext.DrawEllipse(this.trackedJointBrush, null, jointPoints[jointType], previewImageJointThickness, previewImageJointThickness);
             }
 
             foreach (KeyValuePair<bodyDouble.bones, Tuple<bodyDouble.joints, bodyDouble.joints>> jointPair in bodyDouble.bonesToJoints)
