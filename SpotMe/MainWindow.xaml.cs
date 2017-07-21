@@ -202,7 +202,8 @@ namespace SpotMe
 
             if (testExercise.UpdateFormDefinitions())
             {
-                ExerciseManager.saveExercise(testExercise);
+                ExerciseManager.saveExerciseV2(testExercise);
+                Exercise squatV2 = ExerciseManager.loadExerciseV2("SQUAT");
             }
 
 

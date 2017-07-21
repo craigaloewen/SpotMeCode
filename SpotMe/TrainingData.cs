@@ -13,18 +13,13 @@ namespace SpotMe
         public string classifierName;
         public int classifierIndex;
         public double[] formData;
+        public Classifier parentClassifier;
 
         public TrainingData() { }
 
-        public TrainingData(string inClassifierName, int inClassIndex, double[] inFormData)
+        public TrainingData(Classifier inputParentClassifier, double[] inFormData)
         {
-            classifierName = inClassifierName;
-            classifierIndex = inClassIndex;
-            formData = inFormData;
-        }
-
-        public TrainingData(Classifier parentClassifier, double[] inFormData)
-        {
+            parentClassifier = inputParentClassifier;
             classifierName = parentClassifier.name;
             classifierIndex = parentClassifier.formTrainingData.Count;
             formData = inFormData;

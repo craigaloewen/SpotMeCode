@@ -31,14 +31,9 @@ namespace SpotMe
         public double[] extendedForm;
         public List<Classifier> classifierData;
 
-        public Exercise() { }
-
-        public Exercise(string inName, double[] inContractedForm, double[] inExtendedForm, List<Classifier> inClassifierList)
+        public Exercise()
         {
-            name = inName;
-            contractedForm = inContractedForm;
-            extendedForm = inExtendedForm;
-            classifierData = inClassifierList;
+            classifierData = new List<Classifier>();
         }
 
         // This is the constructor that will be called based on inputted data
