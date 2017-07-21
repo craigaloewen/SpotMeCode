@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace SpotMe
 {
@@ -78,7 +79,9 @@ namespace SpotMe
                 filePath.Append(exerciseFileNamePreposition);
                 filePath.Append(upperName);
                 filePath.Append(fileExtension);
-                File.WriteAllText(@"\ExerciseData\" + filePath.ToString(), exerciseData.ToString());
+
+                string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
+                File.WriteAllText(filePathInSystem, exerciseData.ToString());
                 return true;
             }
             catch (Exception e)
@@ -100,7 +103,8 @@ namespace SpotMe
 
             try
             {
-                string exerciseDataString = File.ReadAllText(@"\ExerciseData\" + filePath.ToString());
+                string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
+                string exerciseDataString = File.ReadAllText(filePathInSystem);
 
                 string[] exerciseData = exerciseDataString.Trim().Split(delimiter);
 
@@ -171,7 +175,9 @@ namespace SpotMe
                 filePath.Append(exerciseFileNamePreposition);
                 filePath.Append(upperName);
                 filePath.Append(fileExtension);
-                File.Delete(@"\ExerciseData\" + filePath.ToString());
+
+                string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
+                File.Delete(filePathInSystem);
 
                 return true;
             }
@@ -193,7 +199,9 @@ namespace SpotMe
                 filePath.Append(exerciseFileNamePreposition);
                 filePath.Append(upperName);
                 filePath.Append(fileExtension);
-                File.Delete(@"\ExerciseData\" + filePath.ToString());
+
+                string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
+                File.Delete(filePathInSystem);
 
                 return true;
             }
