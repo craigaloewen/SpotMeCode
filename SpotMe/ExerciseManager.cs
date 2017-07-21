@@ -28,6 +28,106 @@ namespace SpotMe
          *  ClassifierName;Id;<FormData>4.56,21.123
          */
 
+        #region General IO
+        public static List<Exercise> getExerciseList()
+        {
+            List<Exercise> exerciseList = new List<Exercise>();
+
+            DirectoryInfo exerciseDirectory = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\"));
+            StringBuilder filesName = new StringBuilder();
+            filesName.Append(exerciseFileNamePreposition);
+            filesName.Append("*");
+            filesName.Append(fileExtension);
+            FileInfo[] exerciseFiles = exerciseDirectory.GetFiles(filesName.ToString());
+
+            foreach (FileInfo f in exerciseFiles)
+            {
+                try
+                {
+                    string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + f.Name);
+                    string exerciseDataString = File.ReadAllText(filePathInSystem);
+                    string[] exerciseData = exerciseDataString.Trim().Split(delimiter);
+
+                    Exercise ex = loadExercise(exerciseData[0]);
+                    exerciseList.Add(ex);
+                }
+                catch(Exception e)
+                {
+
+                }
+            }
+
+            return exerciseList;
+        }
+
+        public static List<string> getExerciseNameList()
+        {
+            List<string> exerciseList = new List<string>();
+
+            DirectoryInfo exerciseDirectory = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\"));
+            StringBuilder filesName = new StringBuilder();
+            filesName.Append(exerciseFileNamePreposition);
+            filesName.Append("*");
+            filesName.Append(fileExtension);
+            FileInfo[] exerciseFiles = exerciseDirectory.GetFiles(filesName.ToString());
+
+            foreach (FileInfo f in exerciseFiles)
+            {
+                try
+                {
+                    string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + f.Name);
+                    string exerciseDataString = File.ReadAllText(filePathInSystem);
+                    string[] exerciseData = exerciseDataString.Trim().Split(delimiter);
+
+                    exerciseList.Add(exerciseData[0]);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            return exerciseList;
+        }
+
+        // Completely deletes Exercise(Exercise, Classifier, TrainingData
+        public static bool deleteExerciseSet(Exercise inExercise)
+        {
+            string upperName = inExercise.name.ToUpper();
+
+            if (upperName == "") return false;
+
+            try
+            {
+                StringBuilder filePath = new StringBuilder();
+                filePath.Append(exerciseFileNamePreposition);
+                filePath.Append(upperName);
+                filePath.Append(fileExtension);
+
+                string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
+                File.Delete(filePathInSystem);
+
+                foreach (Classifier c in inExercise.classifierData)
+                {
+                    deleteClassifierSet(c);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        // Completely deletes Exercise(Exercise, Classifier, TrainingData
+        public static bool deleteExerciseSet(string exerciseName)
+        {
+            Exercise toDeleteExercise = loadExercise(exerciseName);
+            return deleteExerciseSet(toDeleteExercise);
+        }
+        #endregion
+
         #region Exercise Functions
         public static bool saveExercise(Exercise inExercise)
         {
@@ -219,43 +319,6 @@ namespace SpotMe
             {
                 return false;
             }
-        }
-
-        // Completely deletes Exercise(Exercise, Classifier, TrainingData
-        public static bool deleteExerciseSet(Exercise inExercise)
-        {
-            string upperName = inExercise.name.ToUpper();
-
-            if (upperName == "") return false;
-
-            try
-            {
-                StringBuilder filePath = new StringBuilder();
-                filePath.Append(exerciseFileNamePreposition);
-                filePath.Append(upperName);
-                filePath.Append(fileExtension);
-
-                string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
-                File.Delete(filePathInSystem);
-
-                foreach (Classifier c in inExercise.classifierData)
-                {
-                    deleteClassifierSet(c);
-                }
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
-
-        // Completely deletes Exercise(Exercise, Classifier, TrainingData
-        public static bool deleteExerciseSet(string exerciseName)
-        {
-            Exercise toDeleteExercise = loadExercise(exerciseName);
-            return deleteExerciseSet(toDeleteExercise);
         }
         #endregion
 
