@@ -172,6 +172,7 @@ namespace SpotMe
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
         }
 
         /// <summary>
@@ -372,7 +373,7 @@ namespace SpotMe
 
                                 if (storeTrainingDataHACKNum > 400)
                                 {
-                                    TrainingDataIO.saveTrainingData(trainingDataHACKStore, "testDataOutput.csv");
+                                    //TrainingDataIO.saveTrainingData(trainingDataHACKStore, "testDataOutput.csv");
                                     storeTrainingDataHACKNum = -1001;
                                 }
                             }
@@ -446,7 +447,7 @@ namespace SpotMe
         private void loadTrainingData(object sender, RoutedEventArgs e)
         {
             trainingBodyDoublesIndex = 0;
-            trainingBodyDoubles = TrainingDataFileManager.loadBodyDoubleFromFileWithClassifierIgnored(fileNameBox.Text);
+            //trainingBodyDoubles = TrainingDataFileManager.loadBodyDoubleFromFileWithClassifierIgnored(fileNameBox.Text);
 
             updateTrainingData();
         }
@@ -480,16 +481,12 @@ namespace SpotMe
         {
             Accord.Math.Random.Generator.Seed = 0;
 
-            double[][] inputData = TrainingDataIO.readTrainingData("militaryPressData.csv");
-            double[][] testInputs = TrainingDataIO.readTrainingData("bicepCurlData.csv");
 
-            double[][] inputs = inputData;
+            double[][] inputs;
+            int[] outputs;
 
-            int[] outputs =
-            {
-                0,0,0,
-                1,1,1,1
-            };
+            Exercise inputExercise = ExerciseManager.LoadExercise("BICE_CURL");
+            inputExercise.GetTrainingData(out inputs, out outputs);
 
             // Create the multi-class learning algorithm for the machine
             var teacher = new MulticlassSupportVectorLearning<Gaussian>()

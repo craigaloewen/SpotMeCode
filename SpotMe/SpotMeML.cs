@@ -41,10 +41,12 @@ namespace SpotMe
             double[][] inputs;
             int[] outputs;
 
-            bool result = TrainingDataIO.readTrainingDataWithClassifiers("../../exerciseData/bicepCurlData.csv", out inputs, out outputs);
+            Exercise inputExercise = ExerciseManager.LoadExercise("BICEP_CURL");
+
+            inputExercise.GetTrainingData(out inputs, out outputs);
 
             // DEBUG DATA
-            goodForm = inputs[0];
+            goodForm = inputExercise.contractedForm;
             // ----
 
 
@@ -142,7 +144,6 @@ namespace SpotMe
             if (movementIndexValue < lowerMovementLimit && !hasReportedMovement)
             {
                 hasReportedMovement = true;
-                System.Diagnostics.Debug.Print("Movement Stop Detected");
                 return true;
             }
 
