@@ -189,6 +189,7 @@ namespace SpotMe
                 filePath.Append(fileExtension);
 
                 string filePathInSystem = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"exerciseData\" + filePath.ToString());
+                // The filePathInSystem is wrong, it is producing two / characters: so it is showing C:\\Users\\Documents... not C:\Users\Documents, etc.
                 File.WriteAllText(filePathInSystem, exerciseData.ToString());
                 return true;
             }

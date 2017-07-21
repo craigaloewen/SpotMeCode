@@ -40,6 +40,16 @@ namespace SpotMe
         
         public Classifier() { }
 
+        public Classifier(Exercise parentExercise, SkeletonForm inputForm, string inputName, string inputMessage)
+        {
+            formTrainingData = new List<SpotMe.TrainingData>();
+            id = parentExercise.classifierData.Count;
+            name = inputName;
+            message = inputMessage;
+            form = inputForm;
+            exerciseName = parentExercise.name;
+        }
+
         public Classifier(int inId, string inName, string inMessage, SkeletonForm inForm, List<TrainingData> inTrainingData, string inExerciseName)
         {
             id = inId;
@@ -50,10 +60,43 @@ namespace SpotMe
             exerciseName = inExerciseName;
         }
 
+        public bool AddTrainingData(double[] inputData)
+        {
+            TrainingData newData = new SpotMe.TrainingData(this, inputData);
+            formTrainingData.Add(newData);
+            return true;
+        }
+
+        public bool DeleteTrainingData(int trainingDataIndex)
+        {
+            if ( trainingDataIndex < formTrainingData.Count )
+            {
+                formTrainingData.RemoveAt(trainingDataIndex);
+                reIndexTrainingDataStartingAt(trainingDataIndex);
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
         // Whenever we add/delete the trainingDataList we should reIndex
         public void reIndexTrainingData()
         {
             for (int i = 0; i < formTrainingData.Count; ++i)
+            {
+                formTrainingData[i].classifierIndex = i;
+            }
+        }
+
+        private void reIndexTrainingDataStartingAt(int startingIndex)
+        {
+            if (startingIndex >= formTrainingData.Count)
+            {
+                return;
+            }
+
+            for (int i = startingIndex; i < formTrainingData.Count; ++i)
             {
                 formTrainingData[i].classifierIndex = i;
             }

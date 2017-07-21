@@ -41,7 +41,7 @@ namespace SpotMe
             double[][] inputs;
             int[] outputs;
 
-            bool result = TrainingDataIO.readTrainingDataWithClassifiers("bicepCurlData.csv", out inputs, out outputs);
+            bool result = TrainingDataIO.readTrainingDataWithClassifiers("../../exerciseData/bicepCurlData.csv", out inputs, out outputs);
 
             // DEBUG DATA
             goodForm = inputs[0];

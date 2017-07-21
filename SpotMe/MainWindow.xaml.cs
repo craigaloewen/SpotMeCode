@@ -172,6 +172,40 @@ namespace SpotMe
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //
+            // Here is where you can add in some test data to test the file system!
+            // This is all temporary so just use this space to test and then we will delete it later
+            //
+
+            Exercise testExercise = new Exercise("squat");
+
+            testExercise.AddClassifier(SkeletonForm.Contracted, "Good Something Form", "Keep it up!");
+            testExercise.AddClassifier(SkeletonForm.Extended, "Good Extended Form", "Great form! :)");
+            testExercise.AddClassifier(SkeletonForm.Extended, "Good Contracted Form", "Awesome!");
+
+            double[] inputData1 = new double[24] { 0.5,0,0,0,0,0,0,0,0,0,0.2,0,0,0,0,0,0,0,0,0,0,0.1,0,0};
+            double[] inputData2 = new double[24] { 0.5,0,0,0,0,0,0.9,0,0,0,0.2,0,0,0,0,0,0.3,0,0,0,0,0.1,0,0};
+            double[] inputData3 = new double[24] { 0.5,0,0,0,0,0,0.9,0,0,0,0.2,0,0,0,0,0,0.3,0,0,0,0,0.1,0,0};
+            double[] inputData4 = new double[24] { 0.5,0,0,0,0,0,0.9,0,0,0,0.2,0,0,0,0,0,0.3,0,0,0,0,0.1,0,0};
+            double[] inputData5 = new double[24] { 0.5, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0.1, 0, 0 };
+            double[] inputData6 = new double[24] { 0.5, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0.1, 0, 0 };
+            double[] inputData7 = new double[24] { 0.5, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0.1, 0, 0 };
+
+            testExercise.AddTrainingData(0, inputData1);
+            testExercise.AddTrainingData(1, inputData2);
+            testExercise.AddTrainingData(1, inputData3);
+            testExercise.AddTrainingData(2, inputData4);
+            testExercise.AddTrainingData(2, inputData5);
+            testExercise.AddTrainingData(2, inputData6);
+            testExercise.AddTrainingData(2, inputData7);
+
+            if (testExercise.UpdateFormDefinitions())
+            {
+                ExerciseManager.saveExercise(testExercise);
+            }
+
+
         }
 
         /// <summary>
