@@ -172,6 +172,7 @@ namespace SpotMe
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
         }
 
         /// <summary>

@@ -175,11 +175,36 @@ namespace SpotMe
             }
         }
 
-        public void DrawTrainingDataOuput(DrawingContext drawingContext, bodyDouble inBodyDouble, Pen drawingPen)
+        public void DrawBodyDoubleProjection(DrawingContext drawingContext, bodyDouble inBodyDouble, Pen drawingPen, int outputWidth, int outputHeight)
         {
             Dictionary<bodyDouble.joints, Point> jointPoints = new Dictionary<bodyDouble.joints, Point>();
 
             foreach (KeyValuePair<bodyDouble.joints, System.Numerics.Vector3> someVectorPair in inBodyDouble.jointList)
+            {
+                double xValue = ( (someVectorPair.Value.X + 2 ) / 3) * outputWidth;
+                double yValue = outputHeight - ( (someVectorPair.Value.Y + 2 ) / 3) * outputWidth;
+                jointPoints[someVectorPair.Key] = new Point(xValue, yValue);
+            }
+
+            foreach (bodyDouble.joints jointType in jointPoints.Keys)
+            {
+                drawingContext.DrawEllipse(this.trackedJointBrush, null, jointPoints[jointType], JointThickness, JointThickness);
+            }
+
+            foreach (KeyValuePair<bodyDouble.bones, Tuple<bodyDouble.joints, bodyDouble.joints>> jointPair in bodyDouble.bonesToJoints)
+            {
+                Tuple<bodyDouble.joints, bodyDouble.joints> pairValue = jointPair.Value;
+                drawingContext.DrawLine(drawingPen, jointPoints[pairValue.Item1], jointPoints[pairValue.Item2]);
+            }
+        }
+
+        public void DrawTrainingDataOuput(DrawingContext drawingContext, bodyDouble inBodyDouble, Pen drawingPen)
+        {
+            Dictionary<bodyDouble.joints, Point> jointPoints = new Dictionary<bodyDouble.joints, Point>();
+
+            bodyDouble drawBodyDouble = SkeletonModifier.TranslateBodyDouble(new Vector3((float)-0.5, (float)0.5, 3), inBodyDouble);
+
+            foreach (KeyValuePair<bodyDouble.joints, System.Numerics.Vector3> someVectorPair in drawBodyDouble.jointList)
             {
                 CameraSpacePoint jointCamSpacePoint = new CameraSpacePoint();
 
@@ -196,21 +221,11 @@ namespace SpotMe
                 drawingContext.DrawEllipse(this.trackedJointBrush, null, jointPoints[jointType], JointThickness, JointThickness);
             }
 
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineShoulder], jointPoints[bodyDouble.joints.leftShoulder]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftShoulder], jointPoints[bodyDouble.joints.leftElbow]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftElbow], jointPoints[bodyDouble.joints.leftWrist]);
-
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineShoulder], jointPoints[bodyDouble.joints.rightShoulder]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightShoulder], jointPoints[bodyDouble.joints.rightElbow]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightElbow], jointPoints[bodyDouble.joints.rightWrist]);
-
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineBase], jointPoints[bodyDouble.joints.leftHip]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftHip], jointPoints[bodyDouble.joints.leftKnee]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.leftKnee], jointPoints[bodyDouble.joints.leftAnkle]);
-
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.spineBase], jointPoints[bodyDouble.joints.rightHip]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightHip], jointPoints[bodyDouble.joints.rightKnee]);
-            drawingContext.DrawLine(drawingPen, jointPoints[bodyDouble.joints.rightKnee], jointPoints[bodyDouble.joints.rightAnkle]);
+            foreach (KeyValuePair<bodyDouble.bones,Tuple<bodyDouble.joints,bodyDouble.joints>> jointPair in bodyDouble.bonesToJoints)
+            {
+                Tuple<bodyDouble.joints, bodyDouble.joints> pairValue = jointPair.Value;
+                drawingContext.DrawLine(drawingPen, jointPoints[pairValue.Item1], jointPoints[pairValue.Item2]);
+            }
         }
 
         public void DrawFormCorrection(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, Body inBody, double[] acceptedForm, DrawingContext drawingContext, Pen drawingPen)
