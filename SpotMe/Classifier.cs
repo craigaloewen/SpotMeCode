@@ -16,27 +16,29 @@ namespace SpotMe
     /// </summary>
     class Classifier
     {
-        private int classifierId;
-        public int id
+        public int id;
+        private string classifierName;
+        public string name
         {
             get
             {
-                return classifierId;
+                return classifierName;
             }
             set
             {
-                classifierId = value;
+                classifierName = value.ToUpper();
                 foreach (TrainingData t in formTrainingData)
                 {
-                    t.classifierID = classifierId;
+                    t.classifierName = classifierName;
                 }
             }
         }
-        public string name;
         public string message;
-        public SkeletonForm form;
-        public List<TrainingData> formTrainingData;
         public string exerciseName;
+        public SkeletonForm form;
+        public List<TrainingData> formTrainingData;  
+        
+        public Classifier() { }
 
         public Classifier(int inId, string inName, string inMessage, SkeletonForm inForm, List<TrainingData> inTrainingData, string inExerciseName)
         {
@@ -46,6 +48,15 @@ namespace SpotMe
             form = inForm;
             formTrainingData = inTrainingData;
             exerciseName = inExerciseName;
+        }
+
+        // Whenever we add/delete the trainingDataList we should reIndex
+        public void reIndexTrainingData()
+        {
+            for (int i = 0; i < formTrainingData.Count; ++i)
+            {
+                formTrainingData[i].classifierIndex = i;
+            }
         }
     }
 }

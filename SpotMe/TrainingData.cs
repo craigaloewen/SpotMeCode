@@ -8,12 +8,16 @@ namespace SpotMe
 {
     class TrainingData
     {
-        public int classifierID;
+        public string classifierName;
+        public int classifierIndex;
         public double[] formData;
 
-        public TrainingData(int inClassId, double[] inFormData)
+        public TrainingData() { }
+
+        public TrainingData(string inClassifierName, int inClassIndex, double[] inFormData)
         {
-            classifierID = inClassId;
+            classifierName = inClassifierName;
+            classifierIndex = inClassIndex;
             formData = inFormData;
         }
     }
