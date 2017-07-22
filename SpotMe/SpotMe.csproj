@@ -88,36 +88,29 @@
     </ApplicationDefinition>
     <Compile Include="bodyDouble.cs" />
     <Compile Include="Classifier.cs" />
-    <Compile Include="DebugWindow.xaml.cs">
-      <DependentUpon>DebugWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Exercise.cs" />
     <Compile Include="ExerciseList.xaml.cs">
       <DependentUpon>ExerciseList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExerciseManager.cs" />
     <Compile Include="ExerciseView.xaml.cs">
       <DependentUpon>ExerciseView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Feedback.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Feedback.cs" />
     <Compile Include="SkeletonDrawing.cs" />
     <Compile Include="SkeletonModifier.cs" />
     <Compile Include="SpotMeML.cs" />
-    <Compile Include="TrainingDataFileManager.cs" />
-    <Compile Include="TrainingDataIO.cs" />
-    <Page Include="DebugWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="TrainingData.cs" />
     <Page Include="ExerciseList.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ExerciseView.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
