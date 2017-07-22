@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="SkeletonDrawing.cs" />
     <Compile Include="SkeletonModifier.cs" />
+    <Compile Include="SpotMeController.cs" />
     <Compile Include="SpotMeML.cs" />
     <Compile Include="TrainingData.cs" />
     <Page Include="ExerciseListView.xaml">

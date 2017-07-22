@@ -41,7 +41,7 @@ namespace SpotMe
             double[][] inputs;
             int[] outputs;
 
-            Exercise inputExercise = ExerciseManager.LoadExercise("BICEP_CURL");
+            Exercise inputExercise = ExerciseManager.LoadExercise("MILITARY_PRESS");
 
             inputExercise.GetTrainingData(out inputs, out outputs);
 
@@ -91,18 +91,74 @@ namespace SpotMe
 
         }
 
+        public void init(string exerciseName)
+        {
+            Accord.Math.Random.Generator.Seed = 0;
+            lastKnownInput = null;
+
+            double[][] inputs;
+            int[] outputs;
+
+            Exercise inputExercise = ExerciseManager.LoadExercise(exerciseName);
+
+            // DEBUG DATA
+            goodForm = inputExercise.contractedForm;
+            // ----
+
+            inputExercise.GetTrainingData(out inputs, out outputs);
+
+            // Create the multi-class learning algorithm for the machine
+            var teacher = new MulticlassSupportVectorLearning<Gaussian>()
+            {
+                // Configure the learning algorithm to use SMO to train the
+                //  underlying SVMs in each of the binary class subproblems.
+                Learner = (param) => new SequentialMinimalOptimization<Gaussian>()
+                {
+
+                }
+            };
+
+            // Make the machine learn
+            machine = teacher.Learn(inputs, outputs);
+
+            // Create the multi-class learning algorithm for the machine
+            var calibration = new MulticlassSupportVectorLearning<Gaussian>()
+            {
+                Model = machine, // We will start with an existing machine
+
+                // Configure the learning algorithm to use Platt's calibration
+                Learner = (param) => new ProbabilisticOutputCalibration<Gaussian>()
+                {
+                    Model = param.Model // Start with an existing machine
+                }
+            };
+
+
+            // Configure parallel execution options
+            calibration.ParallelOptions.MaxDegreeOfParallelism = 3;
+
+            // Learn a machine
+            calibration.Learn(inputs, outputs);
+        }
+
         public int getClassPrediction(Body inBody)
         {
 
             double[] inputData = SkeletonModifier.PreprocessSkeleton(inBody);
 
+            return getClassPrediction(inputData);
+        }
+
+        public int getClassPrediction(double[] inputData)
+        {
             int prediction = machine.Decide(inputData);
             double probability = machine.Score(inputData);
 
             if (probability < predictionProbabilityCeiling)
             {
                 return -1;
-            } else
+            }
+            else
             {
                 return prediction;
             }
