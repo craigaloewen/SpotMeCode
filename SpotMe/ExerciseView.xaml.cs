@@ -31,7 +31,7 @@ namespace SpotMe
 
         private void BacktoExerciseList(object sender, RoutedEventArgs e)
         {
-            ExerciseList viewPage = new SpotMe.ExerciseList();
+            ExerciseListView viewPage = new SpotMe.ExerciseListView();
             NavigationService.Navigate(viewPage);
         }
     }

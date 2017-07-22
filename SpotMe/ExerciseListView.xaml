@@ -1,0 +1,35 @@
+﻿<Page x:Class="SpotMe.ExerciseListView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SpotMe"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="ExerciseList">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="Header" Text="Welcome to Spot Me!" Grid.Row="0" FontSize="16" />
+        <ListBox x:Name="listBox" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding}" />
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+        </ListBox>
+        <Viewbox Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">
+            <Image Source="{Binding BodyImageSource}" Stretch="UniformToFill" />
+        </Viewbox>
+        <TextBlock x:Name="InstructionsText" Text="Please choose an Exercise" Grid.Row="3" HorizontalAlignment="Center" FontSize="12" />
+        <Button x:Name="StartExerciseButton" Grid.Row="4" Content="Start Exercise" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Click="StartExercise" />
+
+
+    </Grid>
+</Page>
