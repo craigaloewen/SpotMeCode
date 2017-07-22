@@ -9,7 +9,7 @@ namespace SpotMe
     /// <summary>
     /// Stores all the data necessary to describe an exercise
     /// </summary>
-    class Exercise
+    public class Exercise
     {
         public string name;
         public double[] contractedForm;

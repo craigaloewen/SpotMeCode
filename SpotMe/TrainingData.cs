@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
-    class TrainingData
+    public class TrainingData
     {
         public int id;
         public double[] formData;

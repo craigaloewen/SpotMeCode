@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
-    enum SkeletonForm
+    public enum SkeletonForm
     {
         Contracted,
         Extended
@@ -14,7 +14,7 @@ namespace SpotMe
     /// <summary>
     /// Stores all the information necessary to describe a classifier of an exercise's form
     /// </summary>
-    class Classifier
+    public class Classifier
     {
         public int id;
         public string name;

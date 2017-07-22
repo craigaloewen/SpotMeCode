@@ -292,6 +292,18 @@ namespace SpotMe
             return true;
         }
 
+        public static bodyDouble TranslateBodyDouble(Vector3 inputTranslation, bodyDouble bodyToTranslate)
+        {
+            bodyDouble returnBody = new bodyDouble();
+
+            foreach (KeyValuePair<bodyDouble.joints,Vector3> jointPair in bodyToTranslate.jointList)
+            {
+                returnBody.jointList[jointPair.Key] = jointPair.Value + inputTranslation;
+            }
+
+            return returnBody;
+        }
+
         /// <summary>
         /// Takes in data from a machine learning algorithm and outputs an approximation of the 3D skeleton for that data
         /// </summary>
@@ -325,24 +337,26 @@ namespace SpotMe
             Vector3 rightShinDirection= new Vector3((float)inputTrainingData[21], (float)inputTrainingData[22], (float)inputTrainingData[23]);
             rightShinDirection = RotateVectorAroundZthenY(-angleYX, -angleXZ, rightShinDirection);
 
-            returnBody.jointList[bodyDouble.joints.spineShoulder] = new Vector3((float)-0.5, (float)0.5, 2);
-            returnBody.jointList[bodyDouble.joints.spineBase] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3(0, (float)-0.5, 0));
+            returnBody.jointList[bodyDouble.joints.SpineShoulder] = new Vector3((float)0, (float)0, 0);
+            returnBody.jointList[bodyDouble.joints.SpineBase] = returnBody.jointList[bodyDouble.joints.SpineShoulder] + (new Vector3(0, (float)-0.5, 0));
+            returnBody.jointList[bodyDouble.joints.Neck] = returnBody.jointList[bodyDouble.joints.SpineShoulder] + (new Vector3(0, (float)0.15, 0));
+            returnBody.jointList[bodyDouble.joints.Head] = returnBody.jointList[bodyDouble.joints.SpineShoulder] + (new Vector3(0, (float)0.1, 0));
 
-            returnBody.jointList[bodyDouble.joints.leftShoulder] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3((float)-0.3, 0, 0));
-            returnBody.jointList[bodyDouble.joints.leftElbow] = returnBody.jointList[bodyDouble.joints.leftShoulder] + (leftBicepDirection * (float)0.3);
-            returnBody.jointList[bodyDouble.joints.leftWrist] = returnBody.jointList[bodyDouble.joints.leftElbow] + (leftForearmDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.ShoulderLeft] = returnBody.jointList[bodyDouble.joints.SpineShoulder] + (new Vector3((float)-0.15, 0, 0));
+            returnBody.jointList[bodyDouble.joints.ElbowLeft] = returnBody.jointList[bodyDouble.joints.ShoulderLeft] + (leftBicepDirection * (float)0.35);
+            returnBody.jointList[bodyDouble.joints.WristLeft] = returnBody.jointList[bodyDouble.joints.ElbowLeft] + (leftForearmDirection * (float)0.35);
 
-            returnBody.jointList[bodyDouble.joints.rightShoulder] = returnBody.jointList[bodyDouble.joints.spineShoulder] + (new Vector3((float)0.3, 0, 0));
-            returnBody.jointList[bodyDouble.joints.rightElbow] = returnBody.jointList[bodyDouble.joints.rightShoulder] + (rightBicepDirection * (float)0.3);
-            returnBody.jointList[bodyDouble.joints.rightWrist] = returnBody.jointList[bodyDouble.joints.rightElbow] + (rightForearmDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.ShoulderRight] = returnBody.jointList[bodyDouble.joints.SpineShoulder] + (new Vector3((float)0.15, 0, 0));
+            returnBody.jointList[bodyDouble.joints.ElbowRight] = returnBody.jointList[bodyDouble.joints.ShoulderRight] + (rightBicepDirection * (float)0.35);
+            returnBody.jointList[bodyDouble.joints.WristRight] = returnBody.jointList[bodyDouble.joints.ElbowRight] + (rightForearmDirection * (float)0.35);
 
-            returnBody.jointList[bodyDouble.joints.leftHip] = returnBody.jointList[bodyDouble.joints.spineBase] + (new Vector3((float)-0.3, 0, 0));
-            returnBody.jointList[bodyDouble.joints.leftKnee] = returnBody.jointList[bodyDouble.joints.leftHip] + (leftThighDirection * (float)0.3);
-            returnBody.jointList[bodyDouble.joints.leftAnkle] = returnBody.jointList[bodyDouble.joints.leftKnee] + (leftShinDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.HipLeft] = returnBody.jointList[bodyDouble.joints.SpineBase] + (new Vector3((float)-0.15, 0, 0));
+            returnBody.jointList[bodyDouble.joints.KneeLeft] = returnBody.jointList[bodyDouble.joints.HipLeft] + (leftThighDirection * (float)0.35);
+            returnBody.jointList[bodyDouble.joints.AnkleLeft] = returnBody.jointList[bodyDouble.joints.KneeLeft] + (leftShinDirection * (float)0.35);
 
-            returnBody.jointList[bodyDouble.joints.rightHip] = returnBody.jointList[bodyDouble.joints.spineBase] + (new Vector3((float)0.3, 0, 0));
-            returnBody.jointList[bodyDouble.joints.rightKnee] = returnBody.jointList[bodyDouble.joints.rightHip] + (rightThighDirection * (float)0.3);
-            returnBody.jointList[bodyDouble.joints.rightAnkle] = returnBody.jointList[bodyDouble.joints.rightKnee] + (rightShinDirection * (float)0.3);
+            returnBody.jointList[bodyDouble.joints.HipRight] = returnBody.jointList[bodyDouble.joints.SpineBase] + (new Vector3((float)0.15, 0, 0));
+            returnBody.jointList[bodyDouble.joints.KneeRight] = returnBody.jointList[bodyDouble.joints.HipRight] + (rightThighDirection * (float)0.35);
+            returnBody.jointList[bodyDouble.joints.AnkleRight] = returnBody.jointList[bodyDouble.joints.KneeRight] + (rightShinDirection * (float)0.35);
 
             //Build the skeleton from here
 
