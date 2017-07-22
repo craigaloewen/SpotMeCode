@@ -19,7 +19,7 @@ namespace SpotMe
     /// <summary>
     /// Interaction logic for ExerciseList.xaml
     /// </summary>
-    public partial class ExerciseList : Page
+    public partial class ExerciseListView : Page
     {
 
         List<string> exerciseNameList;
@@ -31,7 +31,7 @@ namespace SpotMe
 
         private DrawingGroup bodyFrameDrawingGroup;
 
-        public ExerciseList()
+        public ExerciseListView()
         {
             
 

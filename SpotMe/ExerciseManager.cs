@@ -106,5 +106,21 @@ namespace SpotMe
 
             return outputExercise;
         }
+
+        public static List<string> GetExerciseNames()
+        {
+            List<string> returnList = new List<string>();
+
+            string[] fileEntries = Directory.GetFiles(filePathPrefix);
+
+            foreach (string someString in fileEntries)
+            {
+                string[] fileNameSplit = someString.Split('/');
+                string[] extensionNameSplit = fileNameSplit.Last().Split('.');
+                returnList.Add(extensionNameSplit.First());
+            }
+
+            return returnList;
+        }
     }
 }

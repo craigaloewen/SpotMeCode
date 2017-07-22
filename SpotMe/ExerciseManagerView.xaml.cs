@@ -10,21 +10,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace SpotMe
 {
     /// <summary>
-    /// Interaction logic for ExerciseList.xaml
+    /// Interaction logic for ExerciseManagerView.xaml
     /// </summary>
-    public partial class MainPage : Window
+    public partial class ExerciseManagerView : Page
     {
-
-        public MainPage()
+        public ExerciseManagerView()
         {
             InitializeComponent();
 
-            MainFrame.Content = new ExerciseManagerView();
+            ExerciseListBox.ItemsSource = ExerciseManager.GetExerciseNames();
         }
     }
 }

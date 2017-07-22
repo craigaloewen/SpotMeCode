@@ -89,10 +89,13 @@
     <Compile Include="bodyDouble.cs" />
     <Compile Include="Classifier.cs" />
     <Compile Include="Exercise.cs" />
-    <Compile Include="ExerciseList.xaml.cs">
-      <DependentUpon>ExerciseList.xaml</DependentUpon>
+    <Compile Include="ExerciseListView.xaml.cs">
+      <DependentUpon>ExerciseListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ExerciseManager.cs" />
+    <Compile Include="ExerciseManagerView.xaml.cs">
+      <DependentUpon>ExerciseManagerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExerciseView.xaml.cs">
       <DependentUpon>ExerciseView.xaml</DependentUpon>
     </Compile>
@@ -104,9 +107,13 @@
     <Compile Include="SkeletonModifier.cs" />
     <Compile Include="SpotMeML.cs" />
     <Compile Include="TrainingData.cs" />
-    <Page Include="ExerciseList.xaml">
+    <Page Include="ExerciseListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ExerciseManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ExerciseView.xaml">
       <Generator>MSBuild:Compile</Generator>
