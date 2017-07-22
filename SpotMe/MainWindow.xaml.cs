@@ -191,5 +191,14 @@ namespace SpotMe
             this.StatusText = this.mainController.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
+
+        private void SetModeFunction(object sender, RoutedEventArgs e)
+        {
+            mainController.switchMode(SpotMeController.ControllerMode.Set);
+        }
+        private void ContinuousModeFunction(object sender, RoutedEventArgs e)
+        {
+            mainController.switchMode(SpotMeController.ControllerMode.Continuous);
+        }
     }
 }
