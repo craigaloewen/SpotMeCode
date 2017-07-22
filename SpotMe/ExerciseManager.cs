@@ -122,5 +122,31 @@ namespace SpotMe
 
             return returnList;
         }
+
+        public static bool DeleteExercise(string inputExerciseName)
+        {
+            try
+            {
+                File.Delete(filePathPrefix + inputExerciseName + fileExtension);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool DeleteExercise(Exercise inputExercise)
+        {
+            try
+            {
+                File.Delete(filePathPrefix + inputExercise.name + fileExtension);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
