@@ -84,7 +84,17 @@ namespace SpotMe
 
             if (exerciseName != "")
             {
-                Exercise newExercise = new Exercise(exerciseName);
+                Exercise newExercise;
+                try
+                {
+                    newExercise = ExerciseManager.LoadExercise(exerciseName);
+                }
+                catch (Exception ex)
+                {
+                    // Exercise file not found
+                    newExercise = new Exercise(exerciseName);
+                }
+                
                 ExerciseManager.SaveExercise(newExercise);
 
                 // Reload Exercise List
