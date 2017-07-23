@@ -110,6 +110,8 @@ namespace SpotMe
             View
         };
 
+        public Body lastRecordedSkeleton;
+
         public ControllerMode currentMode;
 
         public SpotMeController()
@@ -157,6 +159,10 @@ namespace SpotMe
 
             // Initializes the drawing component
             skeletonDrawingController = new SkeletonDrawing(coordinateMapper);
+
+            // Start off in continuous mode
+            switchMode(ControllerMode.Continuous);
+
         }
 
         ~SpotMeController()
@@ -167,7 +173,6 @@ namespace SpotMe
         public bool Init(string inputExercise)
         {
             outputMessage = "Initialized";
-            currentMode = ControllerMode.Continuous;
 
             LoadExercise(inputExercise);
 
@@ -281,9 +286,15 @@ namespace SpotMe
 
         public bool switchMode(ControllerMode inputMode)
         {
+            /*
             using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
             {
                 dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+            }
+            */
+            using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
+            {
+                dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
             }
             currentMode = inputMode;
             return true;
@@ -306,6 +317,8 @@ namespace SpotMe
 
                     if (body.IsTracked && currentExercise != null)
                     {
+
+                        lastRecordedSkeleton = body;
 
                         skeletonDrawingController.DrawClippedEdges(body, dc);
 
@@ -375,24 +388,22 @@ namespace SpotMe
 
         private void SetModeFrameArrived()
         {
-            using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
+            int penIndex = 0;
+            foreach (Body body in this.bodies)
             {
-                dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
-                int penIndex = 0;
-                foreach (Body body in this.bodies)
+                if (body.IsTracked && currentExercise != null)
                 {
+                    double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
 
-                    Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
+                    int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
 
-                    if (body.IsTracked && currentExercise != null)
+                    if (machineLearningAlg.hasBodyPaused(bodyPreProcessedData))
                     {
+                        lastRecordedSkeleton = body;
 
-                        double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
-
-                        int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
-
-                        if (machineLearningAlg.hasBodyPaused(bodyPreProcessedData))
+                        using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
                         {
+                            Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
                             dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                             IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
@@ -416,9 +427,7 @@ namespace SpotMe
                             skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
                         }
                     }
-
                 }
-
             }
         }
     }

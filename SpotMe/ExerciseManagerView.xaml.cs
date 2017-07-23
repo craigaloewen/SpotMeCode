@@ -171,5 +171,11 @@ namespace SpotMe
                 ClearClassifierForms();
             }
         }
+
+        private void BackBtnClick(object sender, RoutedEventArgs e)
+        {
+            ExerciseListView viewPage = new ExerciseListView();
+            NavigationService.Navigate(viewPage);
+        }
     }
 }

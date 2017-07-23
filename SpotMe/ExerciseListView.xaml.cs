@@ -105,5 +105,11 @@ namespace SpotMe
                 InstructionsText.Text = "Error: '" + exception.Message + "' occured \nPlease try again.";
             }
         }
+
+        private void ExerciseManagerClick(object sender, RoutedEventArgs e)
+        {
+            ExerciseManagerView viewPage = new ExerciseManagerView();
+            NavigationService.Navigate(viewPage);
+        }
     }
 }

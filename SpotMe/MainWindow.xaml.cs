@@ -56,6 +56,8 @@ namespace SpotMe
             Thread uiUpdateThread = new Thread(new ThreadStart(UpdateUIWorker));
             uiUpdateThread.Start();
 
+            mainController.switchMode(SpotMeController.ControllerMode.Set);
+
         }
 
         private void UpdateUIWorker()
