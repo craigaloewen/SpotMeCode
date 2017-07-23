@@ -47,9 +47,5 @@
             <ProgressBar x:Name="MovementBar" Grid.Row="3" Height="10" Margin="0 10 0 0" Maximum="0.1" LargeChange="0.01" SmallChange="0.001"></ProgressBar>
         </Grid>
         <Label x:Name="trainingDataLabel" Content="Startup" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" FontSize="36"/>
-
-
-
-
     </Grid>
 </Window>

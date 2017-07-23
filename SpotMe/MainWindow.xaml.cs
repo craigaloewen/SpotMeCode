@@ -150,7 +150,6 @@ namespace SpotMe
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             mainController.Init("MILITARY_PRESS");
-
         }
 
         /// <summary>

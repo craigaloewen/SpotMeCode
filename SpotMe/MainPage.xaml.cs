@@ -26,5 +26,7 @@ namespace SpotMe
 
             MainFrame.Content = new ExerciseListView();
         }
+
+
     }
 }

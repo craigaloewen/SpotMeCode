@@ -33,17 +33,11 @@ namespace SpotMe
 
         public ExerciseListView()
         {
-            
+
 
             // Load exercise name data
 
-            exerciseNameList = new List<string>();
-
-            exerciseNameList.Add("Test 1");
-            exerciseNameList.Add("Test 2");
-            exerciseNameList.Add("Test 3");
-            exerciseNameList.Add("Test 4");
-            exerciseNameList.Add("Test 5");
+            exerciseNameList = ExerciseManager.GetExerciseNames();
 
 
             Exercise selectedExercise = new SpotMe.Exercise();
@@ -95,7 +89,7 @@ namespace SpotMe
             {
                 exerciseName = listBox.SelectedItem.ToString();
 
-                selectedExercise.contractedForm = new double[24] { -1,0,0,1,0,0,-1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 };
+                selectedExercise = ExerciseManager.LoadExercise(exerciseName);
 
                 ExerciseView viewPage = new SpotMe.ExerciseView(selectedExercise);
                 NavigationService.Navigate(viewPage);
