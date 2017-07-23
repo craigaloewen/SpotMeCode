@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SpotMe"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="750" d:DesignWidth="800"
       Title="ExerciseManagerView">
 
     <Grid Height="Auto">
@@ -16,6 +16,8 @@
             <RowDefinition Height="200"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid>
@@ -117,6 +119,56 @@
                     </Grid.RowDefinitions>
                     <Button x:Name="SaveClassifierBtn" Content="Save Classifier" Width="Auto" Margin="5 5 5 5" Grid.Row="0" Click="SaveClassifier" />
                 </Grid>
+            </Grid>
+        </Border>
+        <!-- Input Data -->
+        <TextBlock x:Name="InputDataHeader" Text="Input Data" Grid.Row="6" FontSize="16" />
+        <Border Grid.Row="7" BorderBrush="Gray" BorderThickness="1" Margin="0 5 0 0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <TextBlock Text="Delay Between Captures (ms):" Margin="5 5 5 5" />
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <TextBox x:Name="CaptureDelayBox" Width="40" Margin="5 5 5 5"  />
+                        </Grid>
+                        <Grid Grid.Column="3">
+                            <TextBlock Text="Initial Delay (ms):" Margin="5 5 5 5"  />
+                        </Grid>
+                        <Grid Grid.Column="4">
+                            <TextBox x:Name="InitialDelayBox" Width="40" Margin="5 5 5 5" />
+                        </Grid>
+                        <Grid Grid.Column="6">
+                            <TextBlock Text="Number of Captures to Take:" Margin="5 5 5 5"  />
+                        </Grid>
+                        <Grid Grid.Column="7">
+                            <TextBox x:Name="NumberOfCapturesBox" Width="40" Margin="5 5 5 5" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Button x:Name="InputExerciseDataBtn" Content="Add Training Data" Margin="5 5 5 5" Click="AddTrainingDataBtnClick" />
+                </Grid>
+                <Grid Grid.Row="2">
+                    <TextBlock x:Name="TrainingDataMessage" Margin="5 5 5 5" Visibility="Collapsed" />
+                </Grid>
+
             </Grid>
         </Border>
     </Grid>

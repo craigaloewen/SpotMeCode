@@ -27,11 +27,6 @@ namespace SpotMe
 
         Exercise currentExercise;
 
-        /// <summary>
-        /// Current status text to display
-        /// </summary>
-        private string statusText = null;
-
         public ExerciseView(Exercise inputExercise)
         {
             currentExercise = inputExercise;

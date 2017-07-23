@@ -91,6 +91,12 @@ namespace SpotMe
 
                 selectedExercise = ExerciseManager.LoadExercise(exerciseName);
 
+                if (!IsExerciseValid(selectedExercise))
+                {
+                    Exception newException = new Exception("Invalid exercise data");
+                    throw newException;
+                }
+
                 ExerciseView viewPage = new SpotMe.ExerciseView(selectedExercise);
                 NavigationService.Navigate(viewPage);
             }
@@ -105,5 +111,39 @@ namespace SpotMe
             ExerciseManagerView viewPage = new ExerciseManagerView();
             NavigationService.Navigate(viewPage);
         }
+
+        private bool IsExerciseValid(Exercise inExercise)
+        {
+            if (inExercise.name.Length == 0)
+            {
+                return false;
+            }
+
+            if (inExercise.classifierData.Count <= 1)
+            {
+                return false;
+            }
+
+            if (inExercise.contractedForm == null || inExercise.extendedForm == null)
+            {
+                return false;
+            }
+
+            foreach (Classifier classifier in inExercise.classifierData)
+            {
+                if (classifier.name.Length == 0)
+                {
+                    return false;
+                }
+
+                if (classifier.formTrainingData.Count < 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 }
