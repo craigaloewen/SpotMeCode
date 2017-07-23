@@ -96,6 +96,28 @@ namespace SpotMe
             }
         }
 
+        public List<string> GetClassifierNames()
+        {
+            List<string> returnList = new List<string>();
+
+            foreach (Classifier c in classifierData)
+            {
+                returnList.Add(c.name);
+            }
+
+            return returnList;
+        }
+
+        public Classifier GetClassifierByName(string inClassifierName)
+        {
+            foreach (Classifier c in classifierData)
+            {
+                if (inClassifierName == c.name) return c;
+            }
+
+            return null;
+        }
+
         public bool GetTrainingData(out double[][] inputs, out int[] outputs)
         {
             int trainingDataNum = 0;
