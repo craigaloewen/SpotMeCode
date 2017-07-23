@@ -24,7 +24,7 @@ namespace SpotMe
         {
             InitializeComponent();
 
-            MainFrame.Content = new ExerciseListView();
+            MainFrame.Content = new ExerciseManagerView();
         }
     }
 }

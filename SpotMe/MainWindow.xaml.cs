@@ -36,21 +36,6 @@ namespace SpotMe
         private string statusText = null;
 
         /// <summary>
-        /// Array for the bodies
-        /// </summary>
-        private Body[] bodies = null;
-
-        // Variables to handle showing training data
-        private List<bodyDouble> trainingBodyDoubles;
-        private int trainingBodyDoublesIndex;
-
-        // Some quick hacks to store skeleton data
-        private int storeTrainingDataHACKNum = -1001;
-        private double[][] trainingDataHACKStore = new double[5][];
-
-
-
-        /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         public MainWindow()
@@ -64,10 +49,6 @@ namespace SpotMe
 
             // use the window object as the view model in this simple example
             this.DataContext = this;
-
-            // Initialize some of the training variables
-            trainingBodyDoubles = new List<bodyDouble>();
-            trainingBodyDoublesIndex = 0;
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
@@ -165,8 +146,7 @@ namespace SpotMe
         /// <param name="e">event arguments</param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            mainController.Init();
-            mainController.LoadExercise("MILITARY_PRESS");
+            mainController.Init("MILITARY_PRESS");
 
         }
 

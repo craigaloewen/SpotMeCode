@@ -164,12 +164,12 @@ namespace SpotMe
             CleanUp();
         }
 
-        public bool Init()
+        public bool Init(string inputExercise)
         {
             outputMessage = "Initialized";
             currentMode = ControllerMode.Continuous;
 
-            machineLearningAlg.init();
+            LoadExercise(inputExercise);
 
             if (this.bodyFrameReader != null)
             {

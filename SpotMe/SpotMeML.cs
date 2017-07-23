@@ -30,67 +30,6 @@ namespace SpotMe
         private const double lowerMovementLimit = 0.1;
         private const double upperMovementLimit = 0.2;
 
-        // DEBUG DATA
-        public double[] goodForm = null;
-
-        public void init()
-        {
-            Accord.Math.Random.Generator.Seed = 0;
-            lastKnownInput = null;
-
-            double[][] inputs;
-            int[] outputs;
-
-            Exercise inputExercise = ExerciseManager.LoadExercise("MILITARY_PRESS");
-
-            inputExercise.GetTrainingData(out inputs, out outputs);
-
-            // DEBUG DATA
-            goodForm = inputExercise.contractedForm;
-            // ----
-
-
-            // Create the multi-class learning algorithm for the machine
-            var teacher = new MulticlassSupportVectorLearning<Gaussian>()
-            {
-                // Configure the learning algorithm to use SMO to train the
-                //  underlying SVMs in each of the binary class subproblems.
-                Learner = (param) => new SequentialMinimalOptimization<Gaussian>()
-                {
-                    
-                }
-            };
-
-            // Make the machine learn
-            machine = teacher.Learn(inputs, outputs);
-
-            // Create the multi-class learning algorithm for the machine
-            var calibration = new MulticlassSupportVectorLearning<Gaussian>()
-            {
-                Model = machine, // We will start with an existing machine
-
-                // Configure the learning algorithm to use Platt's calibration
-                Learner = (param) => new ProbabilisticOutputCalibration<Gaussian>()
-                {
-                    Model = param.Model // Start with an existing machine
-                }
-            };
-
-
-            // Configure parallel execution options
-            calibration.ParallelOptions.MaxDegreeOfParallelism = 1;
-
-            // Learn a machine
-            calibration.Learn(inputs, outputs);
-
-            // Obtain class predictions for each sample
-            int[] predicted = machine.Decide(inputs);
-
-            // Get class scores for each sample
-            double[] scores = machine.Score(inputs);
-
-        }
-
         public void init(string exerciseName)
         {
             Accord.Math.Random.Generator.Seed = 0;
@@ -100,10 +39,6 @@ namespace SpotMe
             int[] outputs;
 
             Exercise inputExercise = ExerciseManager.LoadExercise(exerciseName);
-
-            // DEBUG DATA
-            goodForm = inputExercise.contractedForm;
-            // ----
 
             inputExercise.GetTrainingData(out inputs, out outputs);
 
