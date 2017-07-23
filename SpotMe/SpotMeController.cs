@@ -272,9 +272,9 @@ namespace SpotMe
                 if (currentMode == ControllerMode.Continuous)
                 {
                     ContinuousModeFrameArrived();
-                } else
+                } else if (currentMode == ControllerMode.Set)
                 {
-                    int a = 5;
+                    SetModeFrameArrived();
                 }
             }
         }
@@ -336,6 +336,7 @@ namespace SpotMe
 
                         int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
 
+                        machineLearningAlg.hasBodyPaused(bodyPreProcessedData);
 
                         if (predictionResult < 0)
                         {
@@ -372,6 +373,53 @@ namespace SpotMe
             }
         }
 
+        private void SetModeFrameArrived()
+        {
+            using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
+            {
+                dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+                int penIndex = 0;
+                foreach (Body body in this.bodies)
+                {
 
+                    Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
+
+                    if (body.IsTracked && currentExercise != null)
+                    {
+
+                        double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
+
+                        int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
+
+                        if (machineLearningAlg.hasBodyPaused(bodyPreProcessedData))
+                        {
+                            dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+
+                            IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
+
+                            // convert the joint points to depth (display) space
+                            Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
+
+                            foreach (JointType jointType in joints.Keys)
+                            {
+                                // sometimes the depth(Z) of an inferred joint may show as negative
+                                // clamp down to 0.1f to prevent coordinatemapper from returning (-Infinity, -Infinity)
+                                CameraSpacePoint position = joints[jointType].Position;
+                                if (position.Z < 0)
+                                {
+                                    position.Z = InferredZPositionClamp;
+                                }
+
+                                ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
+                                jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
+                            }
+                            skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
+                        }
+                    }
+
+                }
+
+            }
+        }
     }
 }

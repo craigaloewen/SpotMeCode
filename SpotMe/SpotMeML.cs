@@ -116,21 +116,27 @@ namespace SpotMe
         {
             double[] currentInput = SkeletonModifier.PreprocessSkeleton(inBody);
 
+            return hasBodyPaused(currentInput);
+        }
+
+        public bool hasBodyPaused(double[] inputData)
+        {
+
             // Test if this is the first run
             if (lastKnownInput == null)
             {
-                lastKnownInput = currentInput;
+                lastKnownInput = inputData;
                 return false;
             }
 
             // Get number difference between inputs
-            double movementSquaredDiff = getMovementSquaredDiff(currentInput,lastKnownInput);
-            
+            double movementSquaredDiff = getMovementSquaredDiff(inputData, lastKnownInput);
+
             movementIndexValue += movementSquaredDiff;
             //Decay the value
             movementIndexValue *= movementIndexRetentionRate;
 
-            lastKnownInput = currentInput;
+            lastKnownInput = inputData;
 
             if (movementIndexValue < lowerMovementLimit && !hasReportedMovement)
             {

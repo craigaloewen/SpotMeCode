@@ -77,6 +77,7 @@ namespace SpotMe
         public void UpdateUI()
         {
             trainingDataLabel.Content = this.ScreenMessage;
+            MovementBar.Value = mainController.machineLearningAlg.movementIndexValue;
         }
 
         /// <summary>
