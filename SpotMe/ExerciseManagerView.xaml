@@ -8,12 +8,14 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ExerciseManagerView">
 
-    <Grid>
+    <Grid Height="Auto">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="Header" Text="Manage Some Exercises!" Grid.Row="0" FontSize="16" />
         <Grid Grid.Row="1">
@@ -21,24 +23,92 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
-            <ListBox x:Name="ExerciseListBox" Grid.Column="0" HorizontalContentAlignment="Stretch" VerticalAlignment="Top" Margin="0 5 0 0">
+            <ListBox x:Name="ExerciseListBox" Grid.Column="0" HorizontalContentAlignment="Stretch" Height="100" VerticalAlignment="Top" Margin="0 5 0 0">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" Height="100">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="33" />
+                    <RowDefinition Height="33" />
+                    <RowDefinition Height="33" />
                 </Grid.RowDefinitions>
 
-                <Button x:Name="NewExercise" Content="New Exercise" Margin="0 5 0 0" Grid.Row="0"></Button>
-                <Button x:Name="DeleteExercise" Content="Delete Exercise" Margin="0 5 0 0" Grid.Row="1"></Button>
-                
+                <Button x:Name="OpenExerciseBtn" Content="Open Exercise" Margin="5 5 0 0" Grid.Row="0" Click="OpenExercise" />
+                <Button x:Name="DeleteExerciseBtn" Content="Delete Exercise" Margin="5 5 0 0" Grid.Row="1" Click="DeleteExercise" />
+                <Button x:Name="NewExerciseBtn" Content="New Exercise" Margin="5 5 0 0" Grid.Row="2" Click="ClearForms" />
             </Grid>
         </Grid>
+        <!-- EXERCISES -->
+        <TextBlock x:Name="ExerciseHeader" Text="Exercise Details" Grid.Row="2" FontSize="16" />
+        <Border Grid.Row="3" BorderBrush="Gray" BorderThickness="1" Margin="0 5 0 0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Exercise Name" FontSize="12" Margin="5 5 5 5" />
+                        <TextBox x:Name="ExerciseNameTxtBox" VerticalAlignment="Top" Height="20" Width="135" Margin="5 5 5 5" />
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ListBox x:Name="ClassifierListBox" Grid.Row="0" HorizontalContentAlignment="Stretch" Height="90" VerticalAlignment="Top" Margin="5 5 5 5" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button x:Name="OpenClassifierBtn" Content="Open Classifier" Width="Auto" Margin="5 5 5 5" Grid.Row="1" Click="OpenClasifier" />
+                    <Button x:Name="DeleteClassifierBtn" Content="Delete Classifier" Width="Auto" Margin="5 5 5 5" Grid.Row="2" Click="DeleteClassifier" />
+                    <Button x:Name="SaveExerciseBtn" Content="Save Exercise" Width="Auto" Margin="5 5 5 5" Grid.Row="3" Click="SaveExercise" />
+                </Grid>
+            </Grid>
+        </Border>
+        <!-- CLASSIFIERS -->
+        <TextBlock x:Name="ClassifierHeader" Text="Classifier Details" Grid.Row="4" FontSize="16" />
+        <Border Grid.Row="5" BorderBrush="Gray" BorderThickness="1" Margin="0 5 0 0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Classifier Name" FontSize="12" Margin="5 5 5 5" />
+                            <TextBox x:Name="ClassifierNameTxtBox" VerticalAlignment="Top" Height="20" Width="130" Margin="5 5 5 5" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Form" FontSize="12" Margin="5 5 5 5" />
+                            <RadioButton x:Name="ClassifierContractedFormBtn" GroupName="ClassifierSkeletonForm" Content="Contracted" IsChecked="True" Margin="5 5 5 5" />
+                            <RadioButton x:Name="ClassifierExtendedFormBtn" GroupName="ClassifierSkeletonForm" Content="Extended" Margin="5 5 5 5" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Message" FontSize="12" Margin="5 5 5 5" />
+                            <TextBox x:Name="ClassifierMessageTxtBox" VerticalAlignment="Top" Height="50" Width="165" Margin="5 5 5 5" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Button x:Name="SaveClassifierBtn" Content="Save Classifier" Width="Auto" Margin="5 5 5 5" Grid.Row="0" Click="SaveClassifier" />
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </Page>
