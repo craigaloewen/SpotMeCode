@@ -106,11 +106,14 @@
     <Compile Include="RecordTrainingDataWindow.xaml.cs">
       <DependentUpon>RecordTrainingDataWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Set.cs" />
     <Compile Include="SkeletonDrawing.cs" />
     <Compile Include="SkeletonModifier.cs" />
     <Compile Include="SpotMeController.cs" />
     <Compile Include="SpotMeML.cs" />
     <Compile Include="TrainingData.cs" />
+    <Compile Include="Workout.cs" />
+    <Compile Include="WorkoutManager.cs" />
     <Page Include="ExerciseListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
