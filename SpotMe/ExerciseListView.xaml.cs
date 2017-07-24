@@ -33,17 +33,11 @@ namespace SpotMe
 
         public ExerciseListView()
         {
-            
+
 
             // Load exercise name data
 
-            exerciseNameList = new List<string>();
-
-            exerciseNameList.Add("Test 1");
-            exerciseNameList.Add("Test 2");
-            exerciseNameList.Add("Test 3");
-            exerciseNameList.Add("Test 4");
-            exerciseNameList.Add("Test 5");
+            exerciseNameList = ExerciseManager.GetExerciseNames();
 
 
             Exercise selectedExercise = new SpotMe.Exercise();
@@ -95,7 +89,13 @@ namespace SpotMe
             {
                 exerciseName = listBox.SelectedItem.ToString();
 
-                selectedExercise.contractedForm = new double[24] { -1,0,0,1,0,0,-1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 };
+                selectedExercise = ExerciseManager.LoadExercise(exerciseName);
+
+                if (!IsExerciseValid(selectedExercise))
+                {
+                    Exception newException = new Exception("Invalid exercise data");
+                    throw newException;
+                }
 
                 ExerciseView viewPage = new SpotMe.ExerciseView(selectedExercise);
                 NavigationService.Navigate(viewPage);
@@ -105,5 +105,45 @@ namespace SpotMe
                 InstructionsText.Text = "Error: '" + exception.Message + "' occured \nPlease try again.";
             }
         }
+
+        private void ExerciseManagerClick(object sender, RoutedEventArgs e)
+        {
+            ExerciseManagerView viewPage = new ExerciseManagerView();
+            NavigationService.Navigate(viewPage);
+        }
+
+        private bool IsExerciseValid(Exercise inExercise)
+        {
+            if (inExercise.name.Length == 0)
+            {
+                return false;
+            }
+
+            if (inExercise.classifierData.Count <= 1)
+            {
+                return false;
+            }
+
+            if (inExercise.contractedForm == null || inExercise.extendedForm == null)
+            {
+                return false;
+            }
+
+            foreach (Classifier classifier in inExercise.classifierData)
+            {
+                if (classifier.name.Length == 0)
+                {
+                    return false;
+                }
+
+                if (classifier.formTrainingData.Count < 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 }

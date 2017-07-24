@@ -430,5 +430,19 @@ namespace SpotMe
             return classificationDataArray;
         }
 
+        public static double getSkeletonDifferenceSum(double[] skeletonA, double[] skeletonB)
+        {
+            double skeletonSum = 0;
+
+            double[] angleList = GetSkeletonAngles(skeletonA, skeletonB);
+
+            foreach (double differenceValue in angleList)
+            {
+                skeletonSum += Math.Abs(differenceValue);
+            }
+
+            return skeletonSum;
+        }
+
     }
 }

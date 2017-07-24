@@ -1,0 +1,33 @@
+﻿<Window x:Class="SpotMe.RecordTrainingDataWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpotMe"
+        mc:Ignorable="d"
+        Closing="RecordTrainingDataWindow_Closing"
+        Loaded="RecordTrainingDataWindow_Loaded"
+        Title="RecordTrainingDataWindow" Height="500" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="5 5 5 5">
+            <TextBlock HorizontalAlignment="Left" Text="Time To Next Photo:" FontSize="18"/>
+            <TextBlock HorizontalAlignment="Right" Text="Photos Left:" FontSize="18"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5 5 5 5">
+            <TextBlock x:Name="TimeToNextPictureLabel" HorizontalAlignment="Left" Text="100" FontSize="36"/>
+            <TextBlock x:Name="PictureCountLabel"  HorizontalAlignment="Right" Text="1" FontSize="36"/>
+        </Grid>
+        
+        <Viewbox Grid.Row="2" HorizontalAlignment="Center" Margin="5 5 5 5">
+            <Image Source="{Binding DisplayImageSource}" Stretch="UniformToFill" />
+        </Viewbox>
+
+    </Grid>
+</Window>

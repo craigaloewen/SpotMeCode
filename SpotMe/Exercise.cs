@@ -137,12 +137,24 @@ namespace SpotMe
                 foreach (TrainingData someTrainingData in someClassifier.formTrainingData)
                 {
                     inputs[trainingDataCount] = someTrainingData.formData;
-                    outputs[trainingDataCount] = someTrainingData.id;
+                    outputs[trainingDataCount] = someClassifier.id;
                     trainingDataCount++;
                 }
             }
 
             return true;
+        }
+
+        public double[] getAcceptedForm(SkeletonForm inputForm)
+        {
+            if (inputForm == SkeletonForm.Contracted)
+            {
+                return contractedForm;
+            }
+            else
+            {
+                return extendedForm;
+            }
         }
 
     }

@@ -171,5 +171,45 @@ namespace SpotMe
                 ClearClassifierForms();
             }
         }
+
+        private void BackBtnClick(object sender, RoutedEventArgs e)
+        {
+            ExerciseListView viewPage = new ExerciseListView();
+            NavigationService.Navigate(viewPage);
+        }
+
+        private void AddTrainingDataBtnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int inputDelay = Convert.ToInt32(CaptureDelayBox.Text);
+                int inputNumCaptures = Convert.ToInt32(NumberOfCapturesBox.Text);
+                int inputInitialDelay = Convert.ToInt32(InitialDelayBox.Text);
+
+                string classifierName = ClassifierNameTxtBox.Text;
+                string exerciseName = ExerciseNameTxtBox.Text;
+
+                Exercise openedExercise = new Exercise();
+                Classifier openedClassifier = new Classifier();
+
+                if (classifierName != "" && exerciseName != "")
+                {
+                    openedExercise = ExerciseManager.LoadExercise(exerciseName);
+                    openedClassifier = openedExercise.GetClassifierByName(classifierName);
+                } else
+                {
+                    Exception newException = new Exception("Exercise or classifier not selected");
+                    throw newException;
+                }
+
+                Window captureWindow = new RecordTrainingDataWindow(openedExercise,openedClassifier.id, inputInitialDelay, inputDelay,inputNumCaptures);
+                captureWindow.Show();
+            }
+            catch (Exception exception)
+            {
+                TrainingDataMessage.Visibility = Visibility.Visible;
+                TrainingDataMessage.Text = exception.Message;
+            }
+        }
     }
 }

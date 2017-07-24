@@ -11,24 +11,26 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="Header" Text="Welcome to Spot Me!" Grid.Row="0" FontSize="16" />
-        <ListBox x:Name="listBox" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
+        <Button x:Name="ExerciseManagerButton" Grid.Row="1" Content="Manage Exercises" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Click="ExerciseManagerClick" />
+        <ListBox x:Name="listBox" Grid.Row="2" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <TextBlock Text="{Binding}" />
             </DataTemplate>
         </ListBox.ItemTemplate>
         </ListBox>
-        <Viewbox Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">
+        <Viewbox Grid.Row="3" HorizontalAlignment="Center">
             <Image Source="{Binding BodyImageSource}" Stretch="UniformToFill" />
         </Viewbox>
-        <TextBlock x:Name="InstructionsText" Text="Please choose an Exercise" Grid.Row="3" HorizontalAlignment="Center" FontSize="12" />
-        <Button x:Name="StartExerciseButton" Grid.Row="4" Content="Start Exercise" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Click="StartExercise" />
+        <TextBlock x:Name="InstructionsText" Text="Please choose an Exercise" Grid.Row="4" HorizontalAlignment="Center" FontSize="12" />
+        <Button x:Name="StartExerciseButton" Grid.Row="5" Content="Start Exercise" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Click="StartExercise" />
 
 
     </Grid>

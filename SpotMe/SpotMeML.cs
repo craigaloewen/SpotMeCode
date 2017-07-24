@@ -26,14 +26,11 @@ namespace SpotMe
         public bool hasReportedMovement = false;
 
         public double movementIndexValue = 0;
-        private const double movementIndexRetentionRate = ( 1 - 0.25 ); // The - 0.2 is to put it in a 'decay rate' format which is easier to conceptualize
-        private const double lowerMovementLimit = 0.1;
-        private const double upperMovementLimit = 0.2;
+        private const double movementIndexRetentionRate = ( 1 - 0.15 ); // The - 0.2 is to put it in a 'decay rate' format which is easier to conceptualize
+        private const double lowerMovementLimit = 0.01;
+        private const double upperMovementLimit = 0.05;
 
-        // DEBUG DATA
-        public double[] goodForm = null;
-
-        public void init()
+        public void init(string exerciseName)
         {
             Accord.Math.Random.Generator.Seed = 0;
             lastKnownInput = null;
@@ -41,14 +38,9 @@ namespace SpotMe
             double[][] inputs;
             int[] outputs;
 
-            Exercise inputExercise = ExerciseManager.LoadExercise("BICEP_CURL");
+            Exercise inputExercise = ExerciseManager.LoadExercise(exerciseName);
 
             inputExercise.GetTrainingData(out inputs, out outputs);
-
-            // DEBUG DATA
-            goodForm = inputExercise.contractedForm;
-            // ----
-
 
             // Create the multi-class learning algorithm for the machine
             var teacher = new MulticlassSupportVectorLearning<Gaussian>()
@@ -57,7 +49,7 @@ namespace SpotMe
                 //  underlying SVMs in each of the binary class subproblems.
                 Learner = (param) => new SequentialMinimalOptimization<Gaussian>()
                 {
-                    
+
                 }
             };
 
@@ -78,17 +70,10 @@ namespace SpotMe
 
 
             // Configure parallel execution options
-            calibration.ParallelOptions.MaxDegreeOfParallelism = 1;
+            calibration.ParallelOptions.MaxDegreeOfParallelism = 3;
 
             // Learn a machine
             calibration.Learn(inputs, outputs);
-
-            // Obtain class predictions for each sample
-            int[] predicted = machine.Decide(inputs);
-
-            // Get class scores for each sample
-            double[] scores = machine.Score(inputs);
-
         }
 
         public int getClassPrediction(Body inBody)
@@ -96,13 +81,19 @@ namespace SpotMe
 
             double[] inputData = SkeletonModifier.PreprocessSkeleton(inBody);
 
+            return getClassPrediction(inputData);
+        }
+
+        public int getClassPrediction(double[] inputData)
+        {
             int prediction = machine.Decide(inputData);
             double probability = machine.Score(inputData);
 
             if (probability < predictionProbabilityCeiling)
             {
                 return -1;
-            } else
+            }
+            else
             {
                 return prediction;
             }
@@ -125,21 +116,27 @@ namespace SpotMe
         {
             double[] currentInput = SkeletonModifier.PreprocessSkeleton(inBody);
 
+            return hasBodyPaused(currentInput);
+        }
+
+        public bool hasBodyPaused(double[] inputData)
+        {
+
             // Test if this is the first run
             if (lastKnownInput == null)
             {
-                lastKnownInput = currentInput;
+                lastKnownInput = inputData;
                 return false;
             }
 
             // Get number difference between inputs
-            double movementSquaredDiff = getMovementSquaredDiff(currentInput,lastKnownInput);
-            
+            double movementSquaredDiff = getMovementSquaredDiff(inputData, lastKnownInput);
+
             movementIndexValue += movementSquaredDiff;
             //Decay the value
             movementIndexValue *= movementIndexRetentionRate;
 
-            lastKnownInput = currentInput;
+            lastKnownInput = inputData;
 
             if (movementIndexValue < lowerMovementLimit && !hasReportedMovement)
             {
