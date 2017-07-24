@@ -114,13 +114,7 @@ namespace SpotMe
         public ControllerMode currentMode;
 
         // This is very wasteful, consider adding another integer that is only changed when the list is changed
-        public int totalRecordedSkeletons
-        {
-            get
-            {
-                return storedSkeletons.Count();
-            }
-        }
+        public int totalRecordedSkeletons { get; private set; }
 
 
         public SpotMeController()
@@ -171,6 +165,7 @@ namespace SpotMe
 
             storedSkeletons = new List<bodyDouble>();
             skeletonViewIndex = 0;
+            totalRecordedSkeletons = 0;
 
             // Start off in continuous mode
             SwitchMode(ControllerMode.Continuous);
@@ -283,17 +278,21 @@ namespace SpotMe
                 }
             }
 
+            Body body = (from s in bodies
+                         where s.IsTracked == true
+                         select s).FirstOrDefault();
+
             if (dataReceived)
             {
                 if (currentMode == ControllerMode.Continuous)
                 {
-                    ContinuousModeFrameArrived();
+                    ContinuousModeFrameArrived(body);
                 } else if (currentMode == ControllerMode.Set)
                 {
-                    SetModeFrameArrived();
+                    SetModeFrameArrived(body);
                 } else if (currentMode == ControllerMode.Record)
                 {
-                    RecordModeFrameArrived();
+                    RecordModeFrameArrived(body);
                 }
             }
         }
@@ -323,7 +322,7 @@ namespace SpotMe
 
         public void LoadNextSkeleton()
         {
-            if ((skeletonViewIndex + 1) < storedSkeletons.Count)
+            if ((skeletonViewIndex + 1) < totalRecordedSkeletons)
             {
                 LoadSkeletonView(++skeletonViewIndex);
             }
@@ -337,6 +336,13 @@ namespace SpotMe
             }
         }
 
+        public void ClearSkeletonList()
+        {
+            skeletonViewIndex = 0;
+            totalRecordedSkeletons = 0;
+            storedSkeletons.Clear();
+        }
+
         private void LoadSkeletonView(int indexNum)
         {
             skeletonViewIndex = indexNum;
@@ -345,12 +351,12 @@ namespace SpotMe
 
         private void LoadSkeletonView()
         {
-            if (storedSkeletons.Count < 1)
+            if (totalRecordedSkeletons < 1)
             {
                 return;
             }
 
-            if (skeletonViewIndex >= storedSkeletons.Count)
+            if (skeletonViewIndex >= totalRecordedSkeletons)
             {
                 return;
             }
@@ -367,7 +373,7 @@ namespace SpotMe
             }
         }
 
-        private void ContinuousModeFrameArrived()
+        private void ContinuousModeFrameArrived(Body body)
         {
             using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
             {
@@ -378,16 +384,97 @@ namespace SpotMe
                 dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                 int penIndex = 0;
-                foreach (Body body in this.bodies)
+                Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
+
+                if (body != null && currentExercise != null)
                 {
-                    Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
 
-                    if (body.IsTracked && currentExercise != null)
+                    lastRecordedSkeleton = body;
+
+                    skeletonDrawingController.DrawClippedEdges(body, dc);
+
+                    IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
+
+                    // convert the joint points to depth (display) space
+                    Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
+
+                    foreach (JointType jointType in joints.Keys)
                     {
+                        // sometimes the depth(Z) of an inferred joint may show as negative
+                        // clamp down to 0.1f to prevent coordinatemapper from returning (-Infinity, -Infinity)
+                        CameraSpacePoint position = joints[jointType].Position;
+                        if (position.Z < 0)
+                        {
+                            position.Z = InferredZPositionClamp;
+                        }
 
-                        lastRecordedSkeleton = body;
+                        ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
+                        jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
+                    }
 
-                        skeletonDrawingController.DrawClippedEdges(body, dc);
+                    skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
+
+                    skeletonDrawingController.DrawTrainingDataOuput(dc, SkeletonModifier.TrainingDataTo3DSkeleton(SkeletonModifier.PreprocessSkeleton(body)), drawPen);
+
+                    double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
+
+                    int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
+
+                    machineLearningAlg.hasBodyPaused(bodyPreProcessedData);
+
+                    if (predictionResult < 0)
+                    {
+                        outputMessage = "Undetermined";
+
+                        // This seems excessive...
+                        double differenceToContracted = SkeletonModifier.getSkeletonDifferenceSum(bodyPreProcessedData, currentExercise.contractedForm);
+                        double differenceToExtended = SkeletonModifier.getSkeletonDifferenceSum(bodyPreProcessedData, currentExercise.extendedForm);
+
+                        if (differenceToContracted > differenceToExtended)
+                        {
+                            skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.extendedForm, dc, drawPen);
+                        }
+                        else
+                        {
+                            skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.contractedForm, dc, drawPen);
+                        }
+                        // End of Excessive portion
+                    }
+                    else
+                    {
+                        outputMessage = currentExercise.classifierData[predictionResult].name;
+                        if (predictionResult > 1)
+                        {
+                            skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.getAcceptedForm(currentExercise.classifierData[predictionResult].form), dc, drawPen);
+                        }
+                    }
+
+                    // prevent drawing outside of our render area
+                    this.bodyFrameDrawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+                }
+            }
+        }
+
+        private void SetModeFrameArrived(Body body)
+        {
+            int penIndex = 0;
+            if (body != null && currentExercise != null)
+            {
+                double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
+
+                int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
+
+                if (machineLearningAlg.hasBodyPaused(bodyPreProcessedData))
+                {
+                    lastRecordedSkeleton = body;
+
+                    storedSkeletons.Add(SkeletonModifier.TrainingDataTo3DSkeleton(bodyPreProcessedData));
+                    totalRecordedSkeletons++;
+
+                    using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
+                    {
+                        Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
+                        dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                         IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
 
@@ -407,16 +494,8 @@ namespace SpotMe
                             ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
                             jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
                         }
-
                         skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
-
-                        skeletonDrawingController.DrawTrainingDataOuput(dc, SkeletonModifier.TrainingDataTo3DSkeleton(SkeletonModifier.PreprocessSkeleton(body)), drawPen);
-
-                        double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
-
-                        int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
-
-                        machineLearningAlg.hasBodyPaused(bodyPreProcessedData);
+                        this.bodyFrameDrawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                         if (predictionResult < 0)
                         {
@@ -444,91 +523,12 @@ namespace SpotMe
                                 skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.getAcceptedForm(currentExercise.classifierData[predictionResult].form), dc, drawPen);
                             }
                         }
-
-                    }
-                }
-
-                // prevent drawing outside of our render area
-                this.bodyFrameDrawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
-            }
-        }
-
-        private void SetModeFrameArrived()
-        {
-            int penIndex = 0;
-            foreach (Body body in this.bodies)
-            {
-                if (body.IsTracked && currentExercise != null)
-                {
-                    double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
-
-                    int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
-
-                    if (machineLearningAlg.hasBodyPaused(bodyPreProcessedData))
-                    {
-                        lastRecordedSkeleton = body;
-
-                        storedSkeletons.Add(SkeletonModifier.TrainingDataTo3DSkeleton(bodyPreProcessedData));
-
-                        using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
-                        {
-                            Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
-                            dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
-
-                            IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
-
-                            // convert the joint points to depth (display) space
-                            Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
-
-                            foreach (JointType jointType in joints.Keys)
-                            {
-                                // sometimes the depth(Z) of an inferred joint may show as negative
-                                // clamp down to 0.1f to prevent coordinatemapper from returning (-Infinity, -Infinity)
-                                CameraSpacePoint position = joints[jointType].Position;
-                                if (position.Z < 0)
-                                {
-                                    position.Z = InferredZPositionClamp;
-                                }
-
-                                ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
-                                jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
-                            }
-                            skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
-                            this.bodyFrameDrawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
-
-                            if (predictionResult < 0)
-                            {
-                                outputMessage = "Undetermined";
-
-                                // This seems excessive...
-                                double differenceToContracted = SkeletonModifier.getSkeletonDifferenceSum(bodyPreProcessedData, currentExercise.contractedForm);
-                                double differenceToExtended = SkeletonModifier.getSkeletonDifferenceSum(bodyPreProcessedData, currentExercise.extendedForm);
-
-                                if (differenceToContracted > differenceToExtended)
-                                {
-                                    skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.extendedForm, dc, drawPen);
-                                }
-                                else
-                                {
-                                    skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.contractedForm, dc, drawPen);
-                                }
-                                // End of Excessive portion
-                            }
-                            else
-                            {
-                                outputMessage = currentExercise.classifierData[predictionResult].name;
-                                if (predictionResult > 1)
-                                {
-                                    skeletonDrawingController.DrawFormCorrection(joints, jointPoints, body, currentExercise.getAcceptedForm(currentExercise.classifierData[predictionResult].form), dc, drawPen);
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
 
-        private void RecordModeFrameArrived()
+        private void RecordModeFrameArrived(Body body)
         {
             using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
             {
@@ -539,38 +539,35 @@ namespace SpotMe
                 dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                 int penIndex = 0;
-                foreach (Body body in this.bodies)
+                Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
+
+                if (body != null && currentExercise != null)
                 {
-                    Pen drawPen = skeletonDrawingController.bodyColors[penIndex++];
 
-                    if (body.IsTracked && currentExercise != null)
+                    lastRecordedSkeleton = body;
+
+                    skeletonDrawingController.DrawClippedEdges(body, dc);
+
+                    IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
+
+                    // convert the joint points to depth (display) space
+                    Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
+
+                    foreach (JointType jointType in joints.Keys)
                     {
-
-                        lastRecordedSkeleton = body;
-
-                        skeletonDrawingController.DrawClippedEdges(body, dc);
-
-                        IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
-
-                        // convert the joint points to depth (display) space
-                        Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
-
-                        foreach (JointType jointType in joints.Keys)
+                        // sometimes the depth(Z) of an inferred joint may show as negative
+                        // clamp down to 0.1f to prevent coordinatemapper from returning (-Infinity, -Infinity)
+                        CameraSpacePoint position = joints[jointType].Position;
+                        if (position.Z < 0)
                         {
-                            // sometimes the depth(Z) of an inferred joint may show as negative
-                            // clamp down to 0.1f to prevent coordinatemapper from returning (-Infinity, -Infinity)
-                            CameraSpacePoint position = joints[jointType].Position;
-                            if (position.Z < 0)
-                            {
-                                position.Z = InferredZPositionClamp;
-                            }
-
-                            ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
-                            jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
+                            position.Z = InferredZPositionClamp;
                         }
 
-                        skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
+                        ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(position);
+                        jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
                     }
+
+                    skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
                 }
 
                 // prevent drawing outside of our render area
