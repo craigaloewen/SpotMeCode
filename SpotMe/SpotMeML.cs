@@ -109,6 +109,11 @@ namespace SpotMe
                 returnValue += ( inputDiff * inputDiff );
             }
 
+            if (Double.IsNaN(returnValue))
+            {
+                returnValue = 0;
+            }
+
             return returnValue;
         }
 

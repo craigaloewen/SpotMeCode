@@ -116,6 +116,8 @@ namespace SpotMe
         // This is very wasteful, consider adding another integer that is only changed when the list is changed
         public int totalRecordedSkeletons { get; private set; }
 
+        private ulong prevTrackingID;
+
 
         public SpotMeController()
         {
@@ -166,6 +168,8 @@ namespace SpotMe
             storedSkeletons = new List<bodyDouble>();
             skeletonViewIndex = 0;
             totalRecordedSkeletons = 0;
+
+            prevTrackingID = 0;
 
             // Start off in continuous mode
             SwitchMode(ControllerMode.Continuous);
@@ -278,9 +282,29 @@ namespace SpotMe
                 }
             }
 
-            Body body = (from s in bodies
-                         where s.IsTracked == true
-                         select s).FirstOrDefault();
+            Body body;
+
+            if (prevTrackingID == 0)
+            {
+                body = (from s in bodies
+                        where s.IsTracked == true
+                        select s).FirstOrDefault();
+
+                if (body != null)
+                {
+                    prevTrackingID = body.TrackingId;
+                }
+            } else
+            {
+                body = (from s in bodies
+                        where s.TrackingId == prevTrackingID
+                        select s).FirstOrDefault();
+
+                if (body == null)
+                {
+                    prevTrackingID = 0;
+                }
+            }
 
             if (dataReceived)
             {
