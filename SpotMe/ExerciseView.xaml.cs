@@ -73,6 +73,8 @@ namespace SpotMe
         {
             trainingDataLabel.Content = this.ScreenMessage;
             MovementBar.Value = mainController.machineLearningAlg.movementIndexValue;
+            CurrentRepViewLabel.Text = (mainController.skeletonViewIndex + 1).ToString();
+            TotalRepViewLabel.Text = mainController.totalRecordedSkeletons.ToString();
         }
 
         /// <summary>
@@ -118,11 +120,33 @@ namespace SpotMe
 
         private void SetModeFunction(object sender, RoutedEventArgs e)
         {
+            NextExerciseButton.IsEnabled = false;
+            PrevExerciseButton.IsEnabled = false;
             mainController.SwitchMode(SpotMeController.ControllerMode.Set);
         }
+
         private void ContinuousModeFunction(object sender, RoutedEventArgs e)
         {
+            NextExerciseButton.IsEnabled = false;
+            PrevExerciseButton.IsEnabled = false;
             mainController.SwitchMode(SpotMeController.ControllerMode.Continuous);
+        }
+
+        private void ViewModeFunction(object sender, RoutedEventArgs e)
+        {
+            NextExerciseButton.IsEnabled = true;
+            PrevExerciseButton.IsEnabled = true;
+            mainController.SwitchMode(SpotMeController.ControllerMode.View);
+        }
+
+        private void LoadNextExerciseBtn(object sender, RoutedEventArgs e)
+        {
+            mainController.LoadNextSkeleton();
+        }
+
+        private void LoadPrevExerciseBtn(object sender, RoutedEventArgs e)
+        {
+            mainController.LoadPrevSkeleton();
         }
     }
 }

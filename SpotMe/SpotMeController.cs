@@ -68,11 +68,6 @@ namespace SpotMe
         private int displayHeight;
 
         /// <summary>
-        /// Current status text to display
-        /// </summary>
-        private string statusText = null;
-
-        /// <summary>
         /// Array for the bodies
         /// </summary>
         private Body[] bodies = null;
@@ -113,7 +108,20 @@ namespace SpotMe
 
         public Body lastRecordedSkeleton;
 
+        public List<bodyDouble> storedSkeletons;
+        public int skeletonViewIndex { get; private set; }
+
         public ControllerMode currentMode;
+
+        // This is very wasteful, consider adding another integer that is only changed when the list is changed
+        public int totalRecordedSkeletons
+        {
+            get
+            {
+                return storedSkeletons.Count();
+            }
+        }
+
 
         public SpotMeController()
         {
@@ -160,6 +168,9 @@ namespace SpotMe
 
             // Initializes the drawing component
             skeletonDrawingController = new SkeletonDrawing(coordinateMapper);
+
+            storedSkeletons = new List<bodyDouble>();
+            skeletonViewIndex = 0;
 
             // Start off in continuous mode
             SwitchMode(ControllerMode.Continuous);
@@ -295,12 +306,65 @@ namespace SpotMe
                 dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
             }
             */
+
             using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
             {
                 dc.DrawImage(colorBitmap, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
             }
             currentMode = inputMode;
+
+            if (currentMode == ControllerMode.View)
+            {
+                LoadSkeletonView(0);
+            }
+
             return true;
+        }
+
+        public void LoadNextSkeleton()
+        {
+            if ((skeletonViewIndex + 1) < storedSkeletons.Count)
+            {
+                LoadSkeletonView(++skeletonViewIndex);
+            }
+        }
+
+        public void LoadPrevSkeleton()
+        {
+            if (skeletonViewIndex > 0)
+            {
+                LoadSkeletonView(--skeletonViewIndex);
+            }
+        }
+
+        private void LoadSkeletonView(int indexNum)
+        {
+            skeletonViewIndex = indexNum;
+            LoadSkeletonView();
+        }
+
+        private void LoadSkeletonView()
+        {
+            if (storedSkeletons.Count < 1)
+            {
+                return;
+            }
+
+            if (skeletonViewIndex >= storedSkeletons.Count)
+            {
+                return;
+            }
+
+            using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
+            {
+                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+
+                Pen drawPen = skeletonDrawingController.bodyColors[0];
+
+                bodyDouble body = storedSkeletons[skeletonViewIndex];
+
+                skeletonDrawingController.DrawTrainingDataOuput(dc,body,drawPen);
+            }
         }
 
         private void ContinuousModeFrameArrived()
@@ -403,6 +467,8 @@ namespace SpotMe
                     if (machineLearningAlg.hasBodyPaused(bodyPreProcessedData))
                     {
                         lastRecordedSkeleton = body;
+
+                        storedSkeletons.Add(SkeletonModifier.TrainingDataTo3DSkeleton(bodyPreProcessedData));
 
                         using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
                         {
