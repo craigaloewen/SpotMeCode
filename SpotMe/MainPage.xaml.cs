@@ -27,6 +27,15 @@ namespace SpotMe
             MainFrame.Content = new ExerciseListView();
         }
 
+        public void MainPage_Closing(object sender, EventArgs e)
+        {
+            MainFrame.Content = null;
+
+            base.OnClosed(e);
+
+            Application.Current.Shutdown();
+        }
+
 
     }
 }

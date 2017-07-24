@@ -146,19 +146,19 @@
                             <TextBlock Text="Delay Between Captures (ms):" Margin="5 5 5 5" />
                         </Grid>
                         <Grid Grid.Column="1">
-                            <TextBox x:Name="CaptureDelayBox" Width="40" Margin="5 5 5 5"  />
+                            <TextBox x:Name="CaptureDelayBox" Text="100"  Width="40" Margin="5 5 5 5"  />
                         </Grid>
                         <Grid Grid.Column="3">
                             <TextBlock Text="Initial Delay (ms):" Margin="5 5 5 5"  />
                         </Grid>
                         <Grid Grid.Column="4">
-                            <TextBox x:Name="InitialDelayBox" Width="40" Margin="5 5 5 5" />
+                            <TextBox x:Name="InitialDelayBox" Text="1000" Width="40" Margin="5 5 5 5" />
                         </Grid>
                         <Grid Grid.Column="6">
                             <TextBlock Text="Number of Captures to Take:" Margin="5 5 5 5"  />
                         </Grid>
                         <Grid Grid.Column="7">
-                            <TextBox x:Name="NumberOfCapturesBox" Width="40" Margin="5 5 5 5" />
+                            <TextBox x:Name="NumberOfCapturesBox" Text="5" Width="40" Margin="5 5 5 5" />
                         </Grid>
                     </Grid>
                 </Grid>

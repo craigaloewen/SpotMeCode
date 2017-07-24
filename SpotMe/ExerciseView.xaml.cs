@@ -41,10 +41,10 @@ namespace SpotMe
 
             mainController.Init(inputExercise.name);
 
-            Thread uiUpdateThread = new Thread(new ThreadStart(UpdateUIWorker));
+            Thread uiUpdateThread = new Thread(new ThreadStart(UpdateUIWorker)) { IsBackground = true };
             uiUpdateThread.Start();
 
-            mainController.switchMode(SpotMeController.ControllerMode.Set);
+            mainController.SwitchMode(SpotMeController.ControllerMode.Set);
         }
 
         private void BacktoExerciseList(object sender, RoutedEventArgs e)
@@ -118,11 +118,11 @@ namespace SpotMe
 
         private void SetModeFunction(object sender, RoutedEventArgs e)
         {
-            mainController.switchMode(SpotMeController.ControllerMode.Set);
+            mainController.SwitchMode(SpotMeController.ControllerMode.Set);
         }
         private void ContinuousModeFunction(object sender, RoutedEventArgs e)
         {
-            mainController.switchMode(SpotMeController.ControllerMode.Continuous);
+            mainController.SwitchMode(SpotMeController.ControllerMode.Continuous);
         }
     }
 }

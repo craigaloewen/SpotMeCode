@@ -26,7 +26,7 @@ namespace SpotMe
         public bool hasReportedMovement = false;
 
         public double movementIndexValue = 0;
-        private const double movementIndexRetentionRate = ( 1 - 0.25 ); // The - 0.2 is to put it in a 'decay rate' format which is easier to conceptualize
+        private const double movementIndexRetentionRate = ( 1 - 0.15 ); // The - 0.2 is to put it in a 'decay rate' format which is easier to conceptualize
         private const double lowerMovementLimit = 0.01;
         private const double upperMovementLimit = 0.05;
 

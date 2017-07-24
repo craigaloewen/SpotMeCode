@@ -53,6 +53,8 @@ namespace SpotMe
 
             trainingDataList = new List<double[]>();
 
+            mainController.SwitchMode(SpotMeController.ControllerMode.Record);
+
             mainController.Init(inputExercise.name);
         }
 

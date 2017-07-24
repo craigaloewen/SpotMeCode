@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpotMe"
         mc:Ignorable="d"
+        Closing="MainPage_Closing"
         Title="MainPage" Height="750" Width="800">
     <Grid Margin="10 10 10 10">
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
