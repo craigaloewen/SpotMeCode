@@ -57,7 +57,7 @@ namespace SpotMe
                 int numberOfSets;
                 int setRestTime;
                 int exerciseRestTime;
-                
+
                 line = sr.ReadLine();
                 setRestTime = Convert.ToInt32(line);
 
@@ -78,5 +78,22 @@ namespace SpotMe
             }
             return returnWorkout;
         }
+
+        public static List<string> GetWorkoutNames()
+        {
+            List<string> returnList = new List<string>();
+
+            string[] fileEntries = Directory.GetFiles(filePathPrefix);
+
+            foreach (string someString in fileEntries)
+            {
+                string[] fileNameSplit = someString.Split('/');
+                string[] extensionNameSplit = fileNameSplit.Last().Split('.');
+                returnList.Add(extensionNameSplit.First());
+            }
+
+            return returnList;
+        }
+
     }
 }
