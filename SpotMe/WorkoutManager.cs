@@ -19,7 +19,11 @@ namespace SpotMe
             {
                 using (StreamWriter sw = new StreamWriter(filePathPrefix + inputWorkout.name + fileExtension))
                 {
-                    // Store number of classifiers
+
+                    sw.WriteLine(inputWorkout.setRestTime);
+                    sw.WriteLine(inputWorkout.exerciseRestTime);
+
+                    // Store number of sets
                     sw.WriteLine(inputWorkout.numberOfSets);
 
                     foreach (Set someSet in inputWorkout.setList)
@@ -40,33 +44,39 @@ namespace SpotMe
             return true;
         }
 
-        public static Exercise LoadExercise(string ExerciseName)
+        public static Workout LoadExercise(string workoutName)
         {
+
+            Workout returnWorkout;
 
             // Create an instance of StreamReader to read from a file.
             // The using statement also closes the StreamReader.
-            using (StreamReader sr = new StreamReader(filePathPrefix + ExerciseName + fileExtension))
+            using (StreamReader sr = new StreamReader(filePathPrefix + workoutName + fileExtension))
             {
                 string line;
                 int numberOfSets;
+                int setRestTime;
+                int exerciseRestTime;
+                
+                line = sr.ReadLine();
+                setRestTime = Convert.ToInt32(line);
 
                 line = sr.ReadLine();
+                exerciseRestTime = Convert.ToInt32(line);
 
+                line = sr.ReadLine();
                 numberOfSets = Convert.ToInt32(line);
+
+                returnWorkout = new Workout(workoutName, setRestTime, exerciseRestTime);
 
                 for (int i = 0; i < numberOfSets; i++)
                 {
-                    string classifierName = sr.ReadLine();
-                    string classifierMessage = sr.ReadLine();
-                    SkeletonForm classifierForm = (SkeletonForm)Enum.Parse(typeof(SkeletonForm), sr.ReadLine());
-                    outputExercise.AddClassifier(classifierForm, classifierName, classifierMessage);
+                    string exerciseName = sr.ReadLine();
+                    int numberOfReps = Convert.ToInt32(sr.ReadLine());
+                    returnWorkout.AddSet(numberOfReps, exerciseName);
                 }
-
             }
-
-            outputExercise.UpdateFormDefinitions();
-
-            return outputExercise;
+            return returnWorkout;
         }
     }
 }
