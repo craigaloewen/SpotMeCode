@@ -67,11 +67,6 @@ namespace SpotMe
             InitializeComponent();
             listBox.ItemsSource = exerciseNameList;
 
-            Workout newWorkout = new SpotMe.Workout("Workout A", 50, 90);
-            newWorkout.AddSet(12, "name");
-
-            WorkoutManager.SaveWorkout(newWorkout);
-
         }
 
 

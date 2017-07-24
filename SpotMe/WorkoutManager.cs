@@ -44,7 +44,7 @@ namespace SpotMe
             return true;
         }
 
-        public static Workout LoadExercise(string workoutName)
+        public static Workout LoadWorkout(string workoutName)
         {
 
             Workout returnWorkout;
