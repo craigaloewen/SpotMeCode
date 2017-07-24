@@ -191,11 +191,6 @@ namespace SpotMe
                 jointPoints[someVectorPair.Key] = new Point(xValue, yValue);
             }
 
-            foreach (bodyDouble.joints jointType in jointPoints.Keys)
-            {
-                drawingContext.DrawEllipse(this.trackedJointBrush, null, jointPoints[jointType], previewImageJointThickness, previewImageJointThickness);
-            }
-
             foreach (KeyValuePair<bodyDouble.bones, Tuple<bodyDouble.joints, bodyDouble.joints>> jointPair in bodyDouble.bonesToJoints)
             {
                 Tuple<bodyDouble.joints, bodyDouble.joints> pairValue = jointPair.Value;

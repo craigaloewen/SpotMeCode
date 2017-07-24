@@ -60,8 +60,8 @@ namespace SpotMe
                 Pen inputPen = new Pen(Brushes.Red, 1);
                 Pen blackPen = new Pen(Brushes.Black, 1);
 
-                dc.DrawRectangle(Brushes.Black, blackPen, new Rect(0, 0, previewFrameWidth, previewFrameHeight));
-                drawingObject.DrawBodyDoubleProjection(dc, inputBody, inputPen, previewFrameWidth, previewFrameHeight);
+                //dc.DrawRectangle(Brushes.Black, blackPen, new Rect(0, 0, previewFrameWidth, previewFrameHeight));
+                drawingObject.DrawBodyDoubleProjection(dc, inputBody, blackPen, previewFrameWidth, previewFrameHeight);
             }
 
             InitializeComponent();
