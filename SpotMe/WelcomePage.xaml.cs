@@ -10,32 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace SpotMe
 {
     /// <summary>
-    /// Interaction logic for ExerciseList.xaml
+    /// Interaction logic for WelcomePage.xaml
     /// </summary>
-    public partial class MainPage : Window
+    public partial class WelcomePage : Page
     {
-
-        public MainPage()
+        public WelcomePage()
         {
             InitializeComponent();
-
-            MainFrame.Navigate(new WelcomePage());
         }
-
-        public void MainPage_Closing(object sender, EventArgs e)
-        {
-            MainFrame.Content = null;
-
-            base.OnClosed(e);
-
-            Application.Current.Shutdown();
-        }
-
-
     }
 }

@@ -112,6 +112,9 @@
     <Compile Include="SpotMeController.cs" />
     <Compile Include="SpotMeML.cs" />
     <Compile Include="TrainingData.cs" />
+    <Compile Include="WelcomePage.xaml.cs">
+      <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Workout.cs" />
     <Compile Include="WorkoutManager.cs" />
     <Page Include="ExerciseListView.xaml">
@@ -135,6 +138,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="RecordTrainingDataWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
