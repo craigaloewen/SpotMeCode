@@ -29,12 +29,12 @@
 
             <Canvas Grid.Row="0" >
 
-                <Button x:Name="CreateWorkoutBtn" Content="+" FontSize="50" Background="LightGray" Height="180" Width="210" Canvas.Top="220" Canvas.Left="97" BorderBrush="LightGray" Click="NavigateToCreateWorkoutPage" />
-                <Button x:Name="ExerciseManagerBtn" Content="+" FontSize="50" Background="LightGray" Height="180" Width="210" Canvas.Top="220" Canvas.Left="380" BorderBrush="LightGray" Click="NavigateToExerciseManagerPage" />
+                <Button x:Name="CreateWorkoutBtn" Content="+" FontSize="38" Background="LightGray" Height="133" Width="155" Canvas.Top="172" Canvas.Left="72" BorderBrush="LightGray" Click="NavigateToCreateWorkoutPage" />
+                <Button x:Name="ExerciseManagerBtn" Content="+" FontSize="38" Background="LightGray" Height="133" Width="155" Canvas.Top="172" Canvas.Left="282" BorderBrush="LightGray" Click="NavigateToExerciseManagerPage" />
             </Canvas>
 
             <Canvas Grid.Row="1">
-                <Button x:Name="StartBtn" Content="Start" FontSize="40" Background="LightGray" Height="70" Width="180" Canvas.Bottom="20" Canvas.Right="95" BorderBrush="LightGray" />
+                <Button x:Name="StartBtn" Content="Start" FontSize="30" Background="LightGray" Height="51" Width="133" Canvas.Bottom="24" Canvas.Right="70" BorderBrush="LightGray" />
             </Canvas>
         </Grid>
     </Grid>
