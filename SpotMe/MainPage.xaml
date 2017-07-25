@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SpotMe"
         mc:Ignorable="d"
         Closing="MainPage_Closing"
-        Title="MainPage" Height="750" Width="800">
+        Title="MainPage" Height="810" Width="1440">
     <Grid Margin="10 10 10 10">
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
     </Grid>

@@ -282,32 +282,33 @@ namespace SpotMe
                 }
             }
 
-            Body body;
-
-            if (prevTrackingID == 0)
-            {
-                body = (from s in bodies
-                        where s.IsTracked == true
-                        select s).FirstOrDefault();
-
-                if (body != null)
-                {
-                    prevTrackingID = body.TrackingId;
-                }
-            } else
-            {
-                body = (from s in bodies
-                        where s.TrackingId == prevTrackingID
-                        select s).FirstOrDefault();
-
-                if (body == null)
-                {
-                    prevTrackingID = 0;
-                }
-            }
-
             if (dataReceived)
             {
+                Body body;
+
+                if (prevTrackingID == 0)
+                {
+                    body = (from s in bodies
+                            where s.IsTracked == true
+                            select s).FirstOrDefault();
+
+                    if (body != null)
+                    {
+                        prevTrackingID = body.TrackingId;
+                    }
+                }
+                else
+                {
+                    body = (from s in bodies
+                            where s.TrackingId == prevTrackingID
+                            select s).FirstOrDefault();
+
+                    if (body == null)
+                    {
+                        prevTrackingID = 0;
+                    }
+                }
+
                 if (currentMode == ControllerMode.Continuous)
                 {
                     ContinuousModeFrameArrived(body);

@@ -5,70 +5,51 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SpotMe"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="810" d:DesignWidth="1440"
       Loaded="ExerciseView_Loaded"
       Unloaded="ExerciseView_Unloaded"
       Title="ExerciseView">
-    
 
-    <Grid Grid.Row="1">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
 
-        <Grid Margin="10 0 10 0">
+
+
+    <Grid>
+
+        <Viewbox Stretch="UniformToFill" HorizontalAlignment="Center">
+            <Image Source="{Binding BodyImageSource}" Stretch="UniformToFill" />
+        </Viewbox>
+
+        <Grid Width="Auto" HorizontalAlignment="Right" Margin="10 0 10 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0 0 -1 0" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Segoe UI" FontSize="18">Body Basics</TextBlock>
-
-            <Viewbox Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
-                <Image Source="{Binding BodyImageSource}" Stretch="UniformToFill" />
-            </Viewbox>
-
-            <StatusBar Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" Name="statusBar" VerticalAlignment="Bottom" Background="White">
-                <StatusBarItem Content="{Binding StatusText}" />
-            </StatusBar>
-
-            <Grid Grid.Row="1" Grid.Column="1" Margin="10 0 10 0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Button x:Name="ContinuousModeButton" Grid.Row="0" Content="Continuous Mode" Width="120" Margin="0 10 0 0" Click="ContinuousModeFunction" ></Button>
-                <Button x:Name="SetModeButton" Grid.Row="1" Content="Set Mode" Width="120" Margin="0 10 0 0" Click="SetModeFunction" ></Button>
-                <Button x:Name="ViewModeButton" Grid.Row="2" Content="View Mode" Width="120" Margin="0 10 0 0" Click="ViewModeFunction" ></Button>
-                <ProgressBar x:Name="MovementBar" Grid.Row="3" Height="10" Margin="0 10 0 0" Maximum="0.1" LargeChange="0.01" SmallChange="0.001"></ProgressBar>
-                <Grid Grid.Row="4" Margin="5 5 5 5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="PrevExerciseButton" Grid.Column="0" Content="v" Click="LoadPrevExerciseBtn" IsEnabled="False" />
-                    <TextBlock x:Name="CurrentRepViewLabel" Text="0" Grid.Column="1" />
-                    <TextBlock Text="/" Grid.Column="2" />
-                    <TextBlock x:Name="TotalRepViewLabel" Text="0" Grid.Column="3" />
-                    <Button x:Name="NextExerciseButton" Grid.Column="4" Content="v" Click="LoadNextExerciseBtn" IsEnabled="False" />
-                </Grid>
+            <Button x:Name="ContinuousModeButton" Grid.Row="0" Content="Continuous Mode" Width="120" Margin="0 10 0 0" Click="ContinuousModeFunction" ></Button>
+            <Button x:Name="SetModeButton" Grid.Row="1" Content="Set Mode" Width="120" Margin="0 10 0 0" Click="SetModeFunction" ></Button>
+            <Button x:Name="ViewModeButton" Grid.Row="2" Content="View Mode" Width="120" Margin="0 10 0 0" Click="ViewModeFunction" ></Button>
+            <ProgressBar x:Name="MovementBar" Grid.Row="3" Height="10" Margin="0 10 0 0" Maximum="0.1" LargeChange="0.01" SmallChange="0.001"></ProgressBar>
+            <Grid Grid.Row="4" Margin="5 5 5 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="PrevExerciseButton" Grid.Column="0" Content="v" Click="LoadPrevExerciseBtn" IsEnabled="False" />
+                <TextBlock x:Name="CurrentRepViewLabel" Text="0" Grid.Column="1" />
+                <TextBlock Text="/" Grid.Column="2" />
+                <TextBlock x:Name="TotalRepViewLabel" Text="0" Grid.Column="3" />
+                <Button x:Name="NextExerciseButton" Grid.Column="4" Content="v" Click="LoadNextExerciseBtn" IsEnabled="False" />
             </Grid>
-            <Label x:Name="trainingDataLabel" Content="Startup" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" FontSize="36"/>
         </Grid>
 
-        <Button x:Name="BackToListButton" Grid.Row="1" Content="Back to Exercise List" HorizontalAlignment="Center" VerticalAlignment="Top" Width="150" Click="BacktoExerciseList" />
+        <Label x:Name="trainingDataLabel" Content="Startup" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="80 0 0 0" FontSize="36" Foreground="White" />
+        <Button x:Name="BackToListButton"  Content="Back to Exercise List" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="150" Margin="0 0 0 10"  Click="BacktoExerciseList" />
     </Grid>
 </Page>
