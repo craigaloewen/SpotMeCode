@@ -24,7 +24,9 @@ namespace SpotMe
         {
             InitializeComponent();
 
-            MainFrame.Content = new ExerciseListView();
+            Workout testWorkout = WorkoutManager.LoadWorkout("Workout A");
+
+            MainFrame.Content = new ExerciseView(testWorkout);
         }
 
         public void MainPage_Closing(object sender, EventArgs e)

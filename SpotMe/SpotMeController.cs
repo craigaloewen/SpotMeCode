@@ -10,6 +10,13 @@ using System.Windows.Media.Imaging;
 
 namespace SpotMe
 {
+
+    // A delegate type for hooking up change notifications.
+    public delegate void RepCompleteEventHandler(object sender, EventArgs e);
+
+    // A delegate type for hooking up change notifications.
+    public delegate void SetCompleteEventHandler(object sender, EventArgs e);
+
     class SpotMeController
     {
         /// <summary>
@@ -83,6 +90,16 @@ namespace SpotMe
         public SpotMeML machineLearningAlg;
 
         private Exercise currentExercise;
+
+        // Event to notify rep complete
+        public event RepCompleteEventHandler RepComplete;
+
+        // Invoke the Changed event; called whenever list changes
+        protected virtual void OnRepComplete(EventArgs e)
+        {
+            if (RepComplete != null)
+                RepComplete(this, e);
+        }
 
         public ImageSource frameImageSource
         {
@@ -495,6 +512,7 @@ namespace SpotMe
 
                     storedSkeletons.Add(SkeletonModifier.TrainingDataTo3DSkeleton(bodyPreProcessedData));
                     totalRecordedSkeletons++;
+                    OnRepComplete(EventArgs.Empty);
 
                     using (DrawingContext dc = this.bodyFrameDrawingGroup.Open())
                     {

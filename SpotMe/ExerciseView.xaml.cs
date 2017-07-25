@@ -27,11 +27,18 @@ namespace SpotMe
 
         Exercise currentExercise;
 
-        public ExerciseView(Exercise inputExercise)
+        Workout currentWorkout;
+
+        public ExerciseView(Workout inputWorkout)
         {
-            currentExercise = inputExercise;
+
+            currentWorkout = inputWorkout;
+
+            currentExercise = ExerciseManager.LoadExercise(inputWorkout.setList.First().exerciseName);
 
             mainController = new SpotMeController();
+
+            mainController.RepComplete += new RepCompleteEventHandler(testFunction);
 
             // use the window object as the view model in this simple example
             this.DataContext = this;
@@ -39,12 +46,13 @@ namespace SpotMe
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            mainController.Init(inputExercise.name);
+            mainController.Init(currentExercise.name);
 
             Thread uiUpdateThread = new Thread(new ThreadStart(UpdateUIWorker)) { IsBackground = true };
             uiUpdateThread.Start();
 
             mainController.SwitchMode(SpotMeController.ControllerMode.Set);
+            SetModeButton.IsEnabled = false;
         }
 
         private void BacktoExerciseList(object sender, RoutedEventArgs e)
@@ -71,10 +79,8 @@ namespace SpotMe
 
         public void UpdateUI()
         {
-            trainingDataLabel.Content = this.ScreenMessage;
+            trainingDataLabel.Text = this.ScreenMessage;
             MovementBar.Value = mainController.machineLearningAlg.movementIndexValue;
-            CurrentRepViewLabel.Text = (mainController.skeletonViewIndex + 1).ToString();
-            TotalRepViewLabel.Text = mainController.totalRecordedSkeletons.ToString();
         }
 
         /// <summary>
@@ -107,6 +113,11 @@ namespace SpotMe
             }
         }
 
+        private void testFunction(object sender, EventArgs e)
+        {
+            int a = 5;
+            a++;
+        }
 
         private void ExerciseView_Loaded(object sender, RoutedEventArgs e)
         {
@@ -120,22 +131,20 @@ namespace SpotMe
 
         private void SetModeFunction(object sender, RoutedEventArgs e)
         {
-            NextExerciseButton.IsEnabled = false;
-            PrevExerciseButton.IsEnabled = false;
+            SetModeButton.IsEnabled = false;
+            ContinuousModeButton.IsEnabled = true;
             mainController.SwitchMode(SpotMeController.ControllerMode.Set);
         }
 
         private void ContinuousModeFunction(object sender, RoutedEventArgs e)
         {
-            NextExerciseButton.IsEnabled = false;
-            PrevExerciseButton.IsEnabled = false;
+            SetModeButton.IsEnabled = true;
+            ContinuousModeButton.IsEnabled = false;
             mainController.SwitchMode(SpotMeController.ControllerMode.Continuous);
         }
 
         private void ViewModeFunction(object sender, RoutedEventArgs e)
         {
-            NextExerciseButton.IsEnabled = true;
-            PrevExerciseButton.IsEnabled = true;
             mainController.SwitchMode(SpotMeController.ControllerMode.View);
         }
 

@@ -7,7 +7,12 @@
         mc:Ignorable="d"
         Closing="MainPage_Closing"
         Title="MainPage" Height="810" Width="1440">
-    <Grid Margin="10 10 10 10">
+    <Window.Resources>
+        <Style TargetType="{x:Type Control}" x:Key="baseStyle">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="0 0 0 0">
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
     </Grid>
 </Window>

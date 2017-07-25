@@ -97,7 +97,9 @@ namespace SpotMe
                     throw newException;
                 }
 
-                ExerciseView viewPage = new SpotMe.ExerciseView(selectedExercise);
+                Workout testWorkout = WorkoutManager.LoadWorkout("Workout A");
+
+                ExerciseView viewPage = new SpotMe.ExerciseView(testWorkout);
                 NavigationService.Navigate(viewPage);
             }
             catch (Exception exception)

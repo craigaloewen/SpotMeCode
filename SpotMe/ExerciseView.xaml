@@ -12,44 +12,20 @@
 
 
 
-
     <Grid>
+
 
         <Viewbox Stretch="UniformToFill" HorizontalAlignment="Center">
             <Image Source="{Binding BodyImageSource}" Stretch="UniformToFill" />
         </Viewbox>
 
-        <Grid Width="Auto" HorizontalAlignment="Right" Margin="10 0 10 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Button x:Name="ContinuousModeButton" Grid.Row="0" Content="Continuous Mode" Width="120" Margin="0 10 0 0" Click="ContinuousModeFunction" ></Button>
-            <Button x:Name="SetModeButton" Grid.Row="1" Content="Set Mode" Width="120" Margin="0 10 0 0" Click="SetModeFunction" ></Button>
-            <Button x:Name="ViewModeButton" Grid.Row="2" Content="View Mode" Width="120" Margin="0 10 0 0" Click="ViewModeFunction" ></Button>
-            <ProgressBar x:Name="MovementBar" Grid.Row="3" Height="10" Margin="0 10 0 0" Maximum="0.1" LargeChange="0.01" SmallChange="0.001"></ProgressBar>
-            <Grid Grid.Row="4" Margin="5 5 5 5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Button x:Name="PrevExerciseButton" Grid.Column="0" Content="v" Click="LoadPrevExerciseBtn" IsEnabled="False" />
-                <TextBlock x:Name="CurrentRepViewLabel" Text="0" Grid.Column="1" />
-                <TextBlock Text="/" Grid.Column="2" />
-                <TextBlock x:Name="TotalRepViewLabel" Text="0" Grid.Column="3" />
-                <Button x:Name="NextExerciseButton" Grid.Column="4" Content="v" Click="LoadNextExerciseBtn" IsEnabled="False" />
-            </Grid>
-        </Grid>
+        <Image Source="/assets/ActiveExercise.png" Stretch="UniformToFill" />
 
-        <Label x:Name="trainingDataLabel" Content="Startup" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="80 0 0 0" FontSize="36" Foreground="White" />
+
+        <Button x:Name="ContinuousModeButton" Content="Continuous Mode" Height="33" Width="148" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,81,0,0" Click="ContinuousModeFunction" ></Button>
+        <Button x:Name="SetModeButton" Content="Set Mode" Height="33" Width="148" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="730,81,0,0" Click="SetModeFunction" ></Button>
+        <ProgressBar x:Name="MovementBar" Margin="595,602,592,158" Maximum="0.1" LargeChange="0.01" SmallChange="0.001"/>
+        <TextBlock x:Name="trainingDataLabel" Text="Startup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,386,0,355" FontSize="27" Foreground="White" Height="69" Width="285" />
         <Button x:Name="BackToListButton"  Content="Back to Exercise List" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="150" Margin="0 0 0 10"  Click="BacktoExerciseList" />
     </Grid>
 </Page>

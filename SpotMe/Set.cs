@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
-    class Set
+    public class Set
     {
         public int numberOfReps;
 

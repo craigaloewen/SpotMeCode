@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpotMe
 {
-    class Workout
+    public class Workout
     {
         
         public int setRestTime { get; private set; }
