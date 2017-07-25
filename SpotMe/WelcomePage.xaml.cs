@@ -24,5 +24,17 @@ namespace SpotMe
         {
             InitializeComponent();
         }
+
+        public void NavigateToCreateWorkoutPage(object sender, RoutedEventArgs e)
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("page2.xaml", UriKind.RelativeOrAbsolute));
+        }
+
+        public void NavigateToExerciseManagerPage(object sender, RoutedEventArgs e)
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("page2.xaml", UriKind.RelativeOrAbsolute));
+        }
     }
 }

@@ -28,9 +28,9 @@
             </Grid.RowDefinitions>
 
             <Canvas Grid.Row="0" >
-                
-                <Button x:Name="CreateWorkoutBtn" Content="+" FontSize="50" Background="LightGray" Height="180" Width="210" Canvas.Top="220" Canvas.Left="97" BorderBrush="LightGray" />
-                <Button x:Name="ExerciseManagerBtn" Content="+" FontSize="50" Background="LightGray" Height="180" Width="210" Canvas.Top="220" Canvas.Left="380" BorderBrush="LightGray" />
+
+                <Button x:Name="CreateWorkoutBtn" Content="+" FontSize="50" Background="LightGray" Height="180" Width="210" Canvas.Top="220" Canvas.Left="97" BorderBrush="LightGray" Click="NavigateToCreateWorkoutPage" />
+                <Button x:Name="ExerciseManagerBtn" Content="+" FontSize="50" Background="LightGray" Height="180" Width="210" Canvas.Top="220" Canvas.Left="380" BorderBrush="LightGray" Click="NavigateToExerciseManagerPage" />
             </Canvas>
 
             <Canvas Grid.Row="1">
