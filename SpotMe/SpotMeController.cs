@@ -126,6 +126,7 @@ namespace SpotMe
         public Body lastRecordedSkeleton;
 
         public List<bodyDouble> storedSkeletons;
+        public List<int> storedRepClassIndex;
         public int skeletonViewIndex { get; private set; }
 
         public ControllerMode currentMode;
@@ -183,6 +184,7 @@ namespace SpotMe
             skeletonDrawingController = new SkeletonDrawing(coordinateMapper);
 
             storedSkeletons = new List<bodyDouble>();
+            storedRepClassIndex = new List<int>();
             skeletonViewIndex = 0;
             totalRecordedSkeletons = 0;
 
@@ -367,6 +369,10 @@ namespace SpotMe
             if ((skeletonViewIndex + 1) < totalRecordedSkeletons)
             {
                 LoadSkeletonView(++skeletonViewIndex);
+            } else
+            {
+                skeletonViewIndex = 0;
+                LoadSkeletonView(skeletonViewIndex);
             }
         }
 
@@ -383,6 +389,7 @@ namespace SpotMe
             skeletonViewIndex = 0;
             totalRecordedSkeletons = 0;
             storedSkeletons.Clear();
+            storedRepClassIndex.Clear();
         }
 
         private void LoadSkeletonView(int indexNum)
@@ -399,6 +406,11 @@ namespace SpotMe
             }
 
             if (skeletonViewIndex >= totalRecordedSkeletons)
+            {
+                return;
+            }
+
+            if (currentMode != ControllerMode.View)
             {
                 return;
             }
@@ -456,8 +468,6 @@ namespace SpotMe
 
                     skeletonDrawingController.DrawBody(joints, jointPoints, dc, drawPen);
 
-                    skeletonDrawingController.DrawTrainingDataOuput(dc, SkeletonModifier.TrainingDataTo3DSkeleton(SkeletonModifier.PreprocessSkeleton(body)), drawPen);
-
                     double[] bodyPreProcessedData = SkeletonModifier.PreprocessSkeleton(body);
 
                     int predictionResult = machineLearningAlg.getClassPrediction(bodyPreProcessedData);
@@ -497,6 +507,17 @@ namespace SpotMe
             }
         }
 
+        public string getOutputMessageFromClassIndex(int inputIndex)
+        {
+            if (inputIndex < 0)
+            {
+                return "Undetermined";
+            } else
+            {
+                return currentExercise.classifierData[inputIndex].name;
+            }
+        }
+
         private void SetModeFrameArrived(Body body)
         {
             int penIndex = 0;
@@ -511,6 +532,7 @@ namespace SpotMe
                     lastRecordedSkeleton = body;
 
                     storedSkeletons.Add(SkeletonModifier.TrainingDataTo3DSkeleton(bodyPreProcessedData));
+                    storedRepClassIndex.Add(predictionResult);
                     totalRecordedSkeletons++;
                     OnRepComplete(EventArgs.Empty);
 

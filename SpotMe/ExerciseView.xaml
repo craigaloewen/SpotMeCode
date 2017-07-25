@@ -16,16 +16,60 @@
 
 
         <Viewbox Stretch="UniformToFill" HorizontalAlignment="Center">
-            <Image Source="{Binding BodyImageSource}" Stretch="UniformToFill" />
+            <Image Source="{Binding BodyImageSource}" Stretch="Uniform" />
         </Viewbox>
 
-        <Image Source="/assets/ActiveExercise.png" Stretch="UniformToFill" />
+        <ProgressBar x:Name="MovementBar" Height="30" Width="400" VerticalAlignment="Bottom" Margin="0 0 0 150" Maximum="0.1" LargeChange="0.01" SmallChange="0.001" Visibility="Hidden"/>
+        <Grid x:Name="FeedbackBox" Height="200" Width="410" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30 0 0 0" >
+            <Rectangle Fill="Black" Opacity="0.5" />
+            <TextBlock x:Name="trainingDataLabel" Text="Startup" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+        </Grid>
 
+        <ProgressBar x:Name="WorkoutProgressBar" Height="30" VerticalAlignment="Bottom" Margin="30 0 30 40" />
 
-        <Button x:Name="ContinuousModeButton" Content="Continuous Mode" Height="33" Width="148" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,81,0,0" Click="ContinuousModeFunction" ></Button>
-        <Button x:Name="SetModeButton" Content="Set Mode" Height="33" Width="148" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="730,81,0,0" Click="SetModeFunction" ></Button>
-        <ProgressBar x:Name="MovementBar" Margin="595,602,592,158" Maximum="0.1" LargeChange="0.01" SmallChange="0.001"/>
-        <TextBlock x:Name="trainingDataLabel" Text="Startup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,386,0,355" FontSize="27" Foreground="White" Height="69" Width="285" />
         <Button x:Name="BackToListButton"  Content="Back to Exercise List" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="150" Margin="0 0 0 10"  Click="BacktoExerciseList" />
+
+        <Grid x:Name="CountdownToNextSet" Margin="0 0 150 0" HorizontalAlignment="Right" Width="300" Height="200" Visibility="Hidden" >
+            <Rectangle Fill="Black" Opacity="0.5" />
+            <TextBlock x:Name="CountdownTimer" Text="00:35" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="70" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+            <TextBlock Text="till next set" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="22" Foreground="White" TextWrapping="Wrap" Margin="55 100 10 0" />
+        </Grid>
+
+        <Grid x:Name="SetReviewBox" Margin="30 100 0 150" HorizontalAlignment="Left" Width="600" Visibility="Hidden"  >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Margin="10 10 10 10">
+                <Rectangle Fill="Black" Opacity="0.5" />
+                <Viewbox Stretch="Uniform" HorizontalAlignment="Center" Margin="0 0 0 120">
+                    <Image Source="{Binding ReviewSkeletonImageSource}" Stretch="Uniform" />
+                </Viewbox>
+                <TextBlock x:Name="ReviewOutputMessageLabel" Text="Some form review" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="30" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 50" />
+                <TextBlock x:Name="SkeletonIndexLabel" Text="1 of 6" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="22" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="10 10 10 10">
+                    <Rectangle Fill="Black" Opacity="0.5" />
+                    <TextBlock Text="Next exercise is:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+                    <TextBlock x:Name="NextExerciseLabel" Text="Some exercise" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+                </Grid>
+                <Grid Grid.Row="1" Margin="10 10 10 10">
+                    <Rectangle Fill="Black" Opacity="0.5" />
+                    <TextBlock Text="Your form accuracy:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+                    <TextBlock x:Name="FormAccuracyBlock" Text="89%" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="72" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="DoneWorkout" Margin="200 100 100 200" Visibility="Hidden">
+            <Rectangle Fill="Black" Opacity="0.5" />
+            <TextBlock Text="Workout Completed!" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="96" Foreground="White" TextWrapping="Wrap" Margin="10 10 10 10" />
+        </Grid>
+        
     </Grid>
 </Page>

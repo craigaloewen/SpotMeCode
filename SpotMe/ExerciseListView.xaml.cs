@@ -28,7 +28,6 @@ namespace SpotMe
         int previewFrameHeight = 120;
 
         private DrawingImage bodyFrameSource;
-
         private DrawingGroup bodyFrameDrawingGroup;
 
         public ExerciseListView()

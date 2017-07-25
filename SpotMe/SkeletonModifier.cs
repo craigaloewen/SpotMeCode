@@ -210,7 +210,7 @@ namespace SpotMe
 
             for (int i = 0; i < boneAngles.Length; i++)
             {
-                if (boneAngles[i] > 0.52) // 30 degs 
+                if (boneAngles[i] > 0.25) // ~15 degs 
                 {
                     returnList.Add((bodyDouble.bones)i);
                 }
