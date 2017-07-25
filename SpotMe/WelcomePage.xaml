@@ -7,6 +7,64 @@
       mc:Ignorable="d" 
       d:DesignHeight="1920" d:DesignWidth="1080"
       Title="Welcome to Spot Me">
+    <Page.Resources>
+        <Style TargetType="Image">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Height" Value="105" />
+            <Setter Property="Width" Value="105" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Opacity" Value="1" />
+            <Style.Triggers>
+                <Trigger Property="Image.IsMouseOver" Value="True">
+                    <Setter Property="Image.Opacity" Value="0.6" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Start Default Position -->
+        <Storyboard x:Key="DefaultPosition" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0" DecelerationRatio=".9" Duration="0:0:.01" />
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:.01" />
+            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" To="1" Duration="0:0:.01" DecelerationRatio=".9" />
+            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" To="1" Duration="0:0:.01" DecelerationRatio=".9" />
+            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TransformGroup.Children)[1].(SkewTransform.AngleX)" To="0" Duration="0:0:.01" DecelerationRatio=".9" />
+            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TransformGroup.Children)[1].(SkewTransform.AngleY)" To="0" Duration="0:0:.01" DecelerationRatio=".9" />
+            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" To="0" Duration="0:0:.01" DecelerationRatio=".9" />
+        </Storyboard>
+        <!-- End Default Position -->
+
+        <!-- Start Slide Up -->
+        <Storyboard x:Key="SlideUpIn">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,500,0,-500" To="0" DecelerationRatio=".9" Duration="0:0:.75" />
+        </Storyboard>
+        <Storyboard x:Key="SlideUpOut">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0,-500,0,500" AccelerationRatio=".9" Duration="0:0:.5" />
+        </Storyboard>
+        <!-- End Slide Up -->
+
+        <!-- Start Slide Down -->
+        <Storyboard x:Key="SlideDownIn" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,-500,0,500" To="0" DecelerationRatio=".9" Duration="0:0:.75" />
+        </Storyboard>
+        <Storyboard x:Key="SlideDownOut">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0,500,0,-500" AccelerationRatio=".9" Duration="0:0:.5" />
+        </Storyboard>
+        <!-- End Slide Down -->
+
+        <!-- Start Slide and Fade -->
+        <Storyboard x:Key="SlideAndFadeIn" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,500,0,-500" To="0" DecelerationRatio=".9" Duration="0:0:.6" />
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:.5" />
+        </Storyboard>
+        <Storyboard x:Key="SlideAndFadeOut">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0,-500,0,500" AccelerationRatio=".9" Duration="0:0:.5" />
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:.5" />
+        </Storyboard>
+        <!-- End Slide and Fade -->
+    </Page.Resources>
+    
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="C:\Users\Jhony Guan\VSCodeWorkspace\SpotMeCode\SpotMe\assets\WelcomePage.png" Stretch="UniformToFill"/>
@@ -18,7 +76,25 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="430" Padding="16,8,15,15">
+                    <Canvas Name="mainCanvas" OverridesDefaultStyle="False">
+                        <!--All Dynamically Generated WrapPanels Add Here-->
+                        <TextBlock TextWrapping="Wrap" x:Name="c_errorText" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center" Visibility="Collapsed" Text="The specified folder does not exist" FontSize="20" />
+                    </Canvas>
+                </ScrollViewer>
+                <!--Popup to display large image-->
+                <Popup Panel.ZIndex="100" Name="pnlImageView" HorizontalAlignment="Center" VerticalAlignment="Center" PopupAnimation="Fade" StaysOpen="True" AllowDrop="True" AllowsTransparency="True" Placement="Center" Width="594" Height="574">
+                    <Border BorderBrush="Black" BorderThickness="0" Background="#77000000" Padding="30">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border BorderBrush="Black" BorderThickness="1">
+                                <Image Name="imgView" Stretch="UniformToFill" Opacity="1" Height="400" Width="400"/>
+                            </Border>
+                            <Button Content="CLOSE" Name="btnClosePopup" Width="300" Height="50" FontSize="16" Margin="0,30,0,0" Click="btnClosePopup_Click" />
+                        </StackPanel>
+                    </Border>
+                </Popup>
+            </StackPanel>
         </Grid>
         
         <Grid Grid.Column="1">
