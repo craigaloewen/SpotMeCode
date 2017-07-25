@@ -317,8 +317,8 @@ namespace SpotMe
             limbJoint2Point = new Point(colorSpacePoint.X, colorSpacePoint.Y);
 
             // Draw joints
-            drawingContext.DrawLine(this.bodyColors[0], jointPoints[baseJointType], limbJoint1Point);
-            drawingContext.DrawLine(this.bodyColors[0], limbJoint1Point, limbJoint2Point);
+            drawingContext.DrawLine(this.bodyColors[2], jointPoints[baseJointType], limbJoint1Point);
+            drawingContext.DrawLine(this.bodyColors[2], limbJoint1Point, limbJoint2Point);
 
             // Draw line back to good form
             drawingContext.DrawLine(this.bodyColors[1], jointPoints[currentPositionJoint], limbJoint2Point);
